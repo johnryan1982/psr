@@ -1,0 +1,10 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "undef": true,
+  "globals": {
+    "window": false,
+    "document": false,
+    "console": false
+  }
+}

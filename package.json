@@ -8,5 +8,11 @@
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/johnryan1982/node-project-scaffold.git"
   },
-  "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README"
+  "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README",
+  "devDependencies": {
+    "jshint": "^2.9.1"
+  },
+  "scripts": {
+    "test": "./node_modules/jshint/bin/jshint src"
+  }
 }

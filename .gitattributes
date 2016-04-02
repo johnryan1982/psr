@@ -1,0 +1,9 @@
+* text eol=lf
+
+*.js text
+*.html text
+*.less text
+*.css text
+
+*.jpg binary
+*.png binary

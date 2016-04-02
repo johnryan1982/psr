@@ -1,0 +1,7 @@
+{
+  "name": "node-project-scaffold",
+  "version": "0.1.0",
+  "description": "A Node.js project scaffold",
+  "author": "John Ryan <johnryan1982@gmail.com>",
+  "license": "ISC"
+}

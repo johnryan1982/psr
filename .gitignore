@@ -1,0 +1,13 @@
+# Mac OS X
+.DS_Store
+
+# npm
+# The following line prevents all .bin dirs from including binaries in the repo.
+# However, it also causes a "No such file or directory" error when attempting
+# to run scripts as it cannot find the binary despite an `npm rebuild`!
+node_modules/**/.bin/
+npm-debug.log
+
+# generated files
+dist/
+coverage/

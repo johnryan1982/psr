@@ -1,0 +1,32 @@
+[user]
+	name = John Ryan
+	email = johnryan1982@gmail.com
+[core]
+	preloadindex = true
+	fscache = true
+  symlinks = false
+  autocrlf = input
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+  interactive = true
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+[color "status"]
+  added = green
+  changed = yellow
+  untracked = red
+[pack]
+  packSizeLimit = 2g
+[help]
+  format = html
+[sendemail]
+  smtpserver = /bin/msmtp.exe
+[diff "astextplain"]
+  textconv = astextplain
+[rebase]
+  autosquash = true

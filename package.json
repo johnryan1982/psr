@@ -3,5 +3,10 @@
   "version": "0.1.0",
   "description": "A Node.js project scaffold",
   "author": "John Ryan <johnryan1982@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/johnryan1982/node-project-scaffold.git"
+  },
+  "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README"
 }

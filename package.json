@@ -10,9 +10,26 @@
   },
   "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README",
   "devDependencies": {
+    "jscs": "^2.11.0",
     "jshint": "^2.9.1"
   },
+  "config": {
+    "srcdir": "src",
+    "testdir": "test"
+  },
   "scripts": {
-    "test": "./node_modules/jshint/bin/jshint src"
+    "prelint": "printf '=> lint: '",
+    "prestyle:js": "printf '=> check style: '",
+
+    "lint": "./node_modules/jshint/bin/jshint $npm_package_config_srcdir $npm_package_config_testdir",
+    "style:js": "./node_modules/jscs/bin/jscs $npm_package_config_srcdir $npm_package_config_testdir",
+    "test": "npm run lint -s && npm run style:js -s",
+
+    "postlint": "npm run complete:subtask -s",
+    "poststyle:js": "npm run complete:subtask -s",
+    "posttest": "npm run complete -s",
+
+    "complete:subtask": "printf '.\n'",
+    "complete": "printf '\n\\033[0;32m✓\\033[0m complete\n\n'"
   }
 }

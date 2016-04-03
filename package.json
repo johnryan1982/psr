@@ -12,23 +12,38 @@
   "devDependencies": {
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
+    "less": "^2.6.1",
     "watch": "^0.17.1"
   },
   "config": {
+    "distdir": "dist",
     "srcdir": "src",
+    "srcdir_styles": "src/styles",
+    "srcdir_html": "src/html",
+    "srcdir_js": "src/js",
     "testdir": "test"
   },
   "scripts": {
-    "prelint": "printf '=> lint: '",
-    "prestyle:js": "printf '=> check style: '",
     "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
     "complete:subtask": "printf '.\n'",
-    "lint": "./node_modules/jshint/bin/jshint $npm_package_config_srcdir $npm_package_config_testdir",
-    "style:js": "./node_modules/jscs/bin/jscs $npm_package_config_srcdir $npm_package_config_testdir",
-    "test": "npm run lint -s && npm run style:js -s",
-    "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir",
+
+    "prelint": "printf '=> linting js: '",
+    "lint": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
     "postlint": "npm run complete:subtask -s",
+
+    "prestyle:js": "printf '=> validating js style: '",
+    "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",
     "poststyle:js": "npm run complete:subtask -s",
-    "posttest": "npm run complete -s"
+
+    "prebuild:css": "printf '=> compiling css: '",
+    "build:css": "lessc $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.css",
+    "postbuild:css": "npm run complete:subtask -s",
+
+    "test": "npm run lint -s && npm run style:js -s",
+    "posttest": "npm run complete -s",
+
+    "build": "npm run build:css -s",
+
+    "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir"
   }
 }

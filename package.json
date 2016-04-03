@@ -14,6 +14,7 @@
     "jshint": "^2.9.1",
     "less": "^2.6.1",
     "less-plugin-clean-css": "^1.5.1",
+    "uglify-js": "^2.6.2",
     "watch": "^0.17.1"
   },
   "config": {
@@ -28,22 +29,26 @@
     "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
     "complete:subtask": "printf '.\n'",
 
-    "prelint": "printf '=> linting js: '",
-    "lint": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
-    "postlint": "npm run complete:subtask -s",
+    "prelint:js": "printf '=> linting js: '",
+    "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
+    "postlint:js": "npm run complete:subtask -s",
 
     "prestyle:js": "printf '=> validating js style: '",
     "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",
     "poststyle:js": "npm run complete:subtask -s",
 
+    "prebuild:js": "printf '=> compiling js: '",
+    "build:js": "uglifyjs $npm_package_config_srcdir_js/main.js -o $npm_package_config_distdir/main.min.js",
+    "postbuild:js": "npm run complete:subtask -s",
     "prebuild:css": "printf '=> compiling css: '",
-    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.css",
+
+    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
     "postbuild:css": "npm run complete:subtask -s",
 
-    "test": "npm run lint -s && npm run style:js -s",
+    "test": "npm run lint:js -s && npm run style:js -s",
     "posttest": "npm run complete -s",
 
-    "build": "npm run build:css -s",
+    "build": "npm run build:js -s && npm run build:css -s",
 
     "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir"
   }

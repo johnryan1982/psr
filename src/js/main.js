@@ -1,5 +1,9 @@
-var really_long_name = 4;
+(function() {
+  'use strict';
 
-window.onload = function() {
-  console.log('This is a JSHint demo');
-};
+  var api = {
+    name: 'John'
+  };
+
+  module.exports = api;
+}());

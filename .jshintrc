@@ -5,6 +5,7 @@
   "globals": {
     "window": false,
     "document": false,
-    "console": false
+    "console": false,
+    "module": false
   }
 }

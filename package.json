@@ -13,6 +13,7 @@
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
     "less": "^2.6.1",
+    "less-plugin-clean-css": "^1.5.1",
     "watch": "^0.17.1"
   },
   "config": {
@@ -36,7 +37,7 @@
     "poststyle:js": "npm run complete:subtask -s",
 
     "prebuild:css": "printf '=> compiling css: '",
-    "build:css": "lessc $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.css",
+    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.css",
     "postbuild:css": "npm run complete:subtask -s",
 
     "test": "npm run lint -s && npm run style:js -s",

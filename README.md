@@ -9,6 +9,7 @@ This repository will act as a Node.js project scaffold that can be easily forked
 * code styling ([JavaScript Code Style](https://www.npmjs.com/package/jscs))
 * file minification ([uglify-js](https://www.npmjs.com/package/uglify-js))
 * test framework ([Mocha](https://www.npmjs.com/package/mocha))
+* code coverage ([Istanbul](https://www.npmjs.com/package/istanbul))
 
 ### CSS
 * pre-processor ([less](https://www.npmjs.com/package/less))
@@ -20,4 +21,4 @@ This repository will act as a Node.js project scaffold that can be easily forked
 ## Desired features
 
 * test runner
-* code coverage
+* pre-commit hooks

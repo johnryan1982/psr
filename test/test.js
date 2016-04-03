@@ -13,8 +13,8 @@ describe('Array', function() {
 
 describe('mylib', function() {
   describe('#api.name', function() {
-    it('should be "John"', function() {
-      assert.equal(mylib.name, 'John');
+    it('should be "Teresa"', function() {
+      assert.equal(mylib.name, 'Teresa');
     });
   });
 });

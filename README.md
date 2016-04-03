@@ -10,6 +10,8 @@ This repository will act as a Node.js project scaffold that can be easily forked
 * file minification ([uglify-js](https://www.npmjs.com/package/uglify-js))
 * test framework ([Mocha](https://www.npmjs.com/package/mocha))
 * code coverage ([Istanbul](https://www.npmjs.com/package/istanbul))
+* test runner ([Karma](https://www.npmjs.com/package/karma))
+* browserify ([browserify](https://www.npmjs.com/package/browserify))
 
 ### CSS
 * pre-processor ([less](https://www.npmjs.com/package/less))
@@ -20,5 +22,4 @@ This repository will act as a Node.js project scaffold that can be easily forked
 
 ## Desired features
 
-* test runner
 * pre-commit hooks

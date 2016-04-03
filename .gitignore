@@ -8,6 +8,10 @@
 node_modules/**/.bin/
 npm-debug.log
 
+# Karma's binaries don't build on vanilla Windows because they require Python.
+# They are optional so we have removed them from the repository and ignored them:
+node_modules/karma/node_modules/chokidar/node_modules/fsevents/
+
 # generated files
 dist/
 coverage/

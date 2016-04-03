@@ -34,31 +34,23 @@
   },
   "scripts": {
     "build": "npm run build:js -s && npm run build:css -s",
-
     "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
     "complete:subtask": "printf '.\n'",
-
     "coverage:js": "istanbul cover _mocha -- -R spec",
-
     "prebuild:css": "printf '=> compiling css: '",
     "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
     "postbuild:css": "npm run complete:subtask -s",
-
     "prebuild:js": "printf '=> compiling js: '",
     "build:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js",
     "postbuild:js": "npm run complete:subtask -s",
-
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
     "postlint:js": "npm run complete:subtask -s",
-
     "prestyle:js": "printf '=> validating js style: '",
     "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",
     "poststyle:js": "npm run complete:subtask -s",
-
     "test": "npm run lint:js -s && npm run style:js -s && npm run coverage:js -s",
     "posttest": "npm run complete -s",
-
     "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir"
   }
 }

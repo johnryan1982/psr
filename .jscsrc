@@ -1,19 +1,38 @@
 {
+  "disallowMixedSpacesAndTabs": true,
+
+  "disallowMultipleLineBreaks": true,
+
+  "disallowMultipleLineStrings": true,
+
+  "disallowNewlineBeforeBlockStatements": true,
+
+  "disallowSpaceAfterPrefixUnaryOperators": true,
+
+  "disallowSpaceBeforePostfixUnaryOperators": true,
+
+  "disallowSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+  },
+
+  "disallowSpacesInsideParentheses": true,
+
+  "disallowTrailingWhitespace": true,
+
   "excludeFiles": [
     "node_modules/**"
   ],
-  "validateIndentation": 2,
-  "requireOperatorBeforeLineBreak": true,
+
   "maximumLineLength": {
     "value": 100,
     "allowComments": true,
     "allowRegex": true
   },
-  "disallowMultipleLineStrings": true,
-  "disallowMixedSpacesAndTabs": true,
-  "disallowTrailingWhitespace": true,
-  "disallowSpaceAfterPrefixUnaryOperators": true,
-  "disallowSpaceBeforePostfixUnaryOperators": true,
+
+  "requireLineFeedAtFileEnd": true,
+
+  "requireOperatorBeforeLineBreak": true,
+
   "requireSpaceAfterKeywords": [
     "if",
     "else",
@@ -25,18 +44,20 @@
     "try",
     "catch"
   ],
-  "requireSpaceBeforeBinaryOperators": true,
+
   "requireSpaceAfterBinaryOperators": true,
-  "requireSpacesInConditionalExpression": true,
+
+  "requireSpaceBeforeBinaryOperators": true,
+
   "requireSpaceBeforeBlockStatements": true,
-  "requireLineFeedAtFileEnd": true,
+
+  "requireSpacesInConditionalExpression": true,
+
   "requireSpacesInFunctionExpression": {
     "beforeOpeningCurlyBrace": true
   },
-  "disallowSpacesInAnonymousFunctionExpression": {
-    "beforeOpeningRoundBrace": true
-  },
+
   "requireSpacesInsideObjectBrackets": "all",
-  "disallowSpacesInsideParentheses": true,
-  "disallowNewlineBeforeBlockStatements": true
+
+  "validateIndentation": 2
 }

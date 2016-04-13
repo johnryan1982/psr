@@ -1,5 +1,5 @@
 /*globals require:false,describe:false,it:false*/
-var assert = require('assert'),
+var assert = require('../src/js/assert.js'),
   mylib = require('../src/js/main.js');
 
 describe('Array', function() {

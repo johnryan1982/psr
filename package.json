@@ -11,7 +11,9 @@
   "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README",
   "devDependencies": {
     "browserify": "^13.0.0",
+    "clear-cli": "^1.0.1",
     "istanbul": "^0.4.2",
+    "jscat": "0.0.2",
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
     "karma": "^0.13.22",
@@ -20,7 +22,10 @@
     "karma-mocha": "^0.2.2",
     "less": "^2.6.1",
     "less-plugin-clean-css": "^1.5.1",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.4.5",
+    "replace": "^0.3.0",
+    "rimraf": "^2.5.2",
     "uglify-js": "^2.6.2",
     "watch": "^0.17.1"
   },
@@ -30,27 +35,46 @@
     "srcdir_styles": "src/styles",
     "srcdir_html": "src/html",
     "srcdir_js": "src/js",
+    "srcdir_vendor": "src/vendor",
     "testdir": "test"
   },
   "scripts": {
-    "build": "npm run build:js -s && npm run build:css -s",
-    "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
-    "complete:subtask": "printf '.\n'",
-    "coverage:js": "istanbul cover _mocha -- -R spec",
+    "prebuild": "npm run clean -s",
+    "build": "npm run build:js -s && npm run build:css -s && npm run build:html",
+
     "prebuild:css": "printf '=> compiling css: '",
     "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
     "postbuild:css": "npm run complete:subtask -s",
-    "prebuild:js": "printf '=> compiling js: '",
-    "build:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js",
-    "postbuild:js": "npm run complete:subtask -s",
+
+    "prebuild:html": "printf '=> updating index.html: '",
+    "build:html": "jscat $npm_package_config_srcdir_html/index.html > $npm_package_config_distdir/index.html && replace -s '\\.\\./(\\w+)/main\\.(js|css)' 'main.min.$2' $npm_package_config_distdir/index.html",
+    "postbuild:html": "npm run complete:subtask -s",
+
+    "build:js": "npm run lint:js -s && npm run style:js -s && browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
+    "postbuild:js": "istanbul check-coverage --statement=10 --branch=10 --function=10 --line=10",
+
+    "preclean": "printf '=> destroying %s: ' \"$npm_package_config_distdir\"",
+    "clean": "rimraf $npm_package_config_distdir && mkdirp $npm_package_config_distdir && touch $npm_package_config_distdir/index.html",
+    "postclean": "npm run complete:subtask -s",
+
+    "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
+    "complete:subtask": "printf '.\n'",
+
+    "precoverage:js": "printf '=> generating coverage report: \n'",
+    "coverage:js": "istanbul cover _mocha -x $npm_package_config_srcdir_vendor/**/*.js -- -R spec",
+
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
     "postlint:js": "npm run complete:subtask -s",
+
     "prestyle:js": "printf '=> validating js style: '",
     "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",
     "poststyle:js": "npm run complete:subtask -s",
-    "test": "npm run lint:js -s && npm run style:js -s && npm run coverage:js -s",
+
+    "pretest": "./node_modules/.bin/clear && printf '\\033[0;36m========== testing @ %s\n\n\\033[0m' \"$(date)\"",
+    "test": "npm run coverage:js -s",
     "posttest": "npm run complete -s",
+
     "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir"
   }
 }

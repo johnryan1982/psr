@@ -10,13 +10,19 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'commonjs'],
+    frameworks: [
+      'mocha',
+      'commonjs'
+    ],
 
 
     // list of files / patterns to load in the browser
     files: [
       'src/js/**/*.js',
-      'test/**/*.js'
+      'test/**/*.js',
+
+      /// explicitly define vendor scripts
+      'src/vendor/chai-3.5.0.js'
     ],
 
 
@@ -28,14 +34,19 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'src/js/**/*.js': ['commonjs'],
-      'test/**/*.js': ['commonjs']
+      'test/**/*.js': ['commonjs'],
+
+      /// explicitly define vendor scripts
+      'src/vendor/chai-3.5.0.js': ['commonjs']
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: [
+      'progress'
+    ],
 
 
     // web server port

@@ -12,6 +12,7 @@
   "devDependencies": {
     "browserify": "^13.0.0",
     "clear-cli": "^1.0.1",
+    "http-server": "^0.9.0",
     "istanbul": "^0.4.2",
     "jscat": "0.0.2",
     "jscs": "^2.11.0",
@@ -32,27 +33,27 @@
   "config": {
     "distdir": "dist",
     "srcdir": "src",
-    "srcdir_styles": "src/styles",
+    "srcdir_css": "src/css",
     "srcdir_html": "src/html",
     "srcdir_js": "src/js",
+    "srcdir_styles": "src/styles",
     "srcdir_vendor": "src/vendor",
     "testdir": "test"
   },
   "scripts": {
-    "install": "npm run pre-commit -s && npm run pre-push -s",
+    "install": "npm run pre-commit -s",
 
-    "pre-commit": "echo \"#!/bin/bash\n\nnpm run test -s\" > ./.git/hooks/pre-commit && chmod +x ./.git/hooks/pre-commit",
-    "pre-push": "echo \"#!/bin/bash\n\nnpm run test -s && npm run build -s\" > ./.git/hooks/pre-push && chmod +x ./.git/hooks/pre-push",
+    "pre-commit": "echo \"#!/bin/bash\n\nnpm run test -s && npm run build -s\" > ./.git/hooks/pre-commit && chmod +x ./.git/hooks/pre-commit",
 
     "prebuild": "npm run clean -s",
     "build": "npm run build:js -s && npm run build:css -s && npm run build:html",
 
     "prebuild:css": "printf '=> compiling css: '",
-    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
+    "build:css": "lessc $npm_package_config_srcdir_styles/main.less $npm_package_config_srcdir_css/main.css && lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
     "postbuild:css": "npm run complete:subtask -s",
 
     "prebuild:html": "printf '=> updating index.html: '",
-    "build:html": "jscat $npm_package_config_srcdir_html/index.html > $npm_package_config_distdir/index.html && replace -s '\\.\\./(\\w+)/main\\.(js|css)' 'main.min.$2' $npm_package_config_distdir/index.html",
+    "build:html": "jscat $npm_package_config_srcdir/index.html > $npm_package_config_distdir/index.html && replace -s '(\\w+)/main\\.(js|css)' 'main.min.$2' $npm_package_config_distdir/index.html",
     "postbuild:html": "npm run complete:subtask -s",
 
     "build:js": "npm run lint:js -s && npm run style:js -s && browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
@@ -63,6 +64,7 @@
     "postclean": "npm run complete:subtask -s",
 
     "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",
+
     "complete:subtask": "printf '.\n'",
 
     "precoverage:js": "printf '=> generating coverage report: \n'",
@@ -76,10 +78,14 @@
     "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",
     "poststyle:js": "npm run complete:subtask -s",
 
-    "pretest": "./node_modules/.bin/clear && printf '\\033[0;36m========== testing @ %s\n\n\\033[0m' \"$(date)\"",
+    "_pretest": "./node_modules/.bin/clear && printf '\\033[0;36m========== testing @ %s\n\n\\033[0m' \"$(date)\"",
+    "pretest": "printf '\\033[0;36m========== testing @ %s\n\n\\033[0m' \"$(date)\"",
     "test": "npm run coverage:js -s",
     "posttest": "npm run complete -s",
 
-    "watch": "watch 'npm run test -s' $npm_package_config_srcdir $npm_package_config_testdir"
+    "serve": "http-server -p 8888 $npm_package_config_distdir/",
+
+    "watch": "watch 'npm run test -s' $npm_package_config_srcdir_js $npm_package_config_srcdir_vendor $npm_package_config_testdir",
+    "watch:css": "watch 'npm run build:css -s' $npm_package_config_srcdir_styles"
   }
 }

@@ -26,4 +26,27 @@ This repository will act as a Node.js project scaffold that can be easily forked
   * mkdir ([mkdirp](https://www.npmjs.com/package/mkdirp))
   * rm ([rimraf](https://www.npmjs.com/package/rimraf))
   * sed ([replace](https://www.npmjs.com/package/replace))
-* add pre-commit git hook and attach to `npm install`
+* add pre-commit and pre-push git hooks, and attach to `npm install`
+* http-server ([http-server](https://www.npmjs.com/package/http-server))
+
+## Scripts
+
+`npm run watch -s`: realtime coverage reports against all JS (`src/vendor`, `src/js` and `test`)
+
+`npm run watch:css -s`: watch LESS files and process as CSS
+
+`npm run serve -s`: serve `dist/` on http://localhost:8888
+
+`./node_modules/.bin/karma start karma.conf.js`: serve karma scripts on http://localhost:9876
+
+A full list of all `npm` scripts is available using `npm run -T`.
+
+## git hooks
+
+### pre-commit
+
+All commits are dependent on successfully completing the following:
+
+* JS code linting, style checking, testing, browserfying and minification;
+* full JS test coverage; and
+* generating CSS from LESS.

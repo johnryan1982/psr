@@ -12,6 +12,7 @@ This repository will act as a Node.js project scaffold that can be easily forked
 * code coverage ([Istanbul](https://www.npmjs.com/package/istanbul))
 * test runner ([Karma](https://www.npmjs.com/package/karma))
 * browserify ([browserify](https://www.npmjs.com/package/browserify))
+* assertion library ([chai](http://chaijs.com/guide/styles/#assert))
 
 ### CSS
 * pre-processor ([less](https://www.npmjs.com/package/less))
@@ -25,7 +26,4 @@ This repository will act as a Node.js project scaffold that can be easily forked
   * mkdir ([mkdirp](https://www.npmjs.com/package/mkdirp))
   * rm ([rimraf](https://www.npmjs.com/package/rimraf))
   * sed ([replace](https://www.npmjs.com/package/replace))
-
-## Desired features
-
-* pre-commit hooks
+* add pre-commit git hook and attach to `npm install`

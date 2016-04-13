@@ -9,9 +9,23 @@
 
   "disallowSpaceAfterPrefixUnaryOperators": true,
 
+  "disallowSpaceBeforeComma": {
+    "allExcept": ["sparseArrays"]
+  },
+
   "disallowSpaceBeforePostfixUnaryOperators": true,
 
+  "disallowSpaceBeforeSemicolon": {
+    "allExcept": [ "(" ]
+  },
+
   "disallowSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+  },
+
+  "disallowSpacesInCallExpression": true,
+
+  "disallowSpacesInFunctionDeclaration": {
     "beforeOpeningRoundBrace": true
   },
 
@@ -32,6 +46,10 @@
   "requireLineFeedAtFileEnd": true,
 
   "requireOperatorBeforeLineBreak": true,
+
+  "requireParenthesesAroundIIFE": true,
+
+  "requireSpaceAfterComma": true,
 
   "requireSpaceAfterKeywords": [
     "if",

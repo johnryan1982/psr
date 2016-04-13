@@ -39,6 +39,11 @@
     "testdir": "test"
   },
   "scripts": {
+    "install": "npm run pre-commit -s && npm run pre-push -s",
+
+    "pre-commit": "echo \"#!/bin/bash\n\nnpm run test -s\" > ./.git/hooks/pre-commit && chmod +x ./.git/hooks/pre-commit",
+    "pre-push": "echo \"#!/bin/bash\n\nnpm run test -s && npm run build -s\" > ./.git/hooks/pre-push && chmod +x ./.git/hooks/pre-push",
+
     "prebuild": "npm run clean -s",
     "build": "npm run build:js -s && npm run build:css -s && npm run build:html",
 
@@ -51,10 +56,10 @@
     "postbuild:html": "npm run complete:subtask -s",
 
     "build:js": "npm run lint:js -s && npm run style:js -s && browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
-    "postbuild:js": "istanbul check-coverage --statement=10 --branch=10 --function=10 --line=10",
+    "postbuild:js": "istanbul check-coverage --statement=100 --branch=100 --function=100 --line=100",
 
     "preclean": "printf '=> destroying %s: ' \"$npm_package_config_distdir\"",
-    "clean": "rimraf $npm_package_config_distdir && mkdirp $npm_package_config_distdir && touch $npm_package_config_distdir/index.html",
+    "clean": "rimraf $npm_package_config_distdir && mkdirp $npm_package_config_distdir",
     "postclean": "npm run complete:subtask -s",
 
     "complete": "printf '\n\\033[0;32m✓\\033[0m complete @ %s\n\n' \"$(date)\"",

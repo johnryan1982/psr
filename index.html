@@ -7,7 +7,35 @@
   <link rel="stylesheet" href="dist/main.min.css">
 </head>
 <body>
-  <h1>This should be styled</h1>
+  <div class="wrapper">
+    <section class="player">
+      <header class="player__name">{Name}</header>
+      <section class="player__score">{5}</section>
+      <section class="player__selection player__selection--scissors"></section>
+      <section class="player__stats">
+        <table>
+          <tr><th>Wins</th><td class="stat__wins">3</td><td class="stat__wins--pc">37.5%</td></tr>
+          <tr><th>Losses</th><td class="stat__losses">5</td><td class="stat__losses--pc">62.5%</td></tr>
+        </table>
+      </section>
+    </section>
+    <section class="player">
+      <header class="player__name">{Name}</header>
+      <section class="player__score">{3}</section>
+      <section class="player__selection player__selection--paper"></section>
+      <section class="player__stats">
+        <table>
+          <tr><th>Wins</th><td class="stat__wins">3</td><td class="stat__wins--pc">37.5%</td></tr>
+          <tr><th>Losses</th><td class="stat__losses">5</td><td class="stat__losses--pc">62.5%</td></tr>
+        </table>
+      </section>
+    </section>
+    <section class="actions">
+      <button class="action paper">p</button>
+      <button class="action scissors">s</button>
+      <button class="action rock">r</button>
+    </section>
+  </div>
   <script src="dist/main.min.js"></script>
 </body>
 </html>

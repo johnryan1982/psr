@@ -2,6 +2,12 @@
 
 This repository will act as a Node.js project scaffold that can be easily forked/cloned.
 
+## Installation
+
+Once cloned/forked, run `npm install`. Simple. All required modules are installed locally so should not interfere with any globally intalled modules.
+
+By creating a `gh-pages` branch, the [github] repo will be publicly available through http://johnryan1982.github.io/node-project-scaffold. Note however that the `dist` directory is intentionally excluded from the repo, so make a note to remove `dist/` from `.gitignore` if you wish to make use of this feature.
+
 ## Installed modules
 
 ### JavaScript

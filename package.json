@@ -55,7 +55,7 @@
     "postbuild:css": "npm run complete:subtask -s",
 
     "prebuild:js": "npm run coverage:js -s",
-    "build:js": "npm run lint:js -s && npm run style:js -s && browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
+    "build:js": "npm run lint:js -s && npm run style:js -s && npm run minify:js -s",
     "postbuild:js": "istanbul check-coverage --statement=100 --branch=100 --function=100 --line=100",
 
     "preclean": "printf '=> destroying %s: ' \"$npm_package_config_distdir\"",
@@ -72,6 +72,10 @@
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
     "postlint:js": "npm run complete:subtask -s",
+
+    "preminify:js": "printf '=> minifying js: '",
+    "minify:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
+    "postminify:js": "npm run complete:subtask -s",
 
     "prestyle:js": "printf '=> validating js style: '",
     "style:js": "jscs $npm_package_config_srcdir_js $npm_package_config_testdir",

@@ -6,6 +6,7 @@
     "window": false,
     "document": false,
     "console": false,
-    "module": false
+    "module": false,
+    "require": false
   }
 }

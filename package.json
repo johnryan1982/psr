@@ -34,6 +34,7 @@
     "distdir": "dist",
     "srcdir": "src",
     "srcdir_js": "src/js",
+    "srcdir_polyfills": "src/polyfills",
     "srcdir_styles": "src/styles",
     "srcdir_vendor": "src/vendor",
     "testdir": "test"
@@ -66,7 +67,7 @@
     "complete:subtask": "printf '.\n'",
 
     "precoverage:js": "printf '=> generating coverage report: \n'",
-    "coverage:js": "istanbul cover _mocha -x $npm_package_config_srcdir_vendor/**/*.js -- -R spec",
+    "coverage:js": "istanbul cover _mocha -x $npm_package_config_srcdir_vendor/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- -R spec",
 
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
@@ -82,7 +83,7 @@
 
     "serve": "reload -p 8888",
 
-    "watch": "watch 'npm run test -s' $npm_package_config_srcdir_js $npm_package_config_srcdir_vendor $npm_package_config_testdir",
+    "watch": "watch 'npm run test -s' $npm_package_config_srcdir_js $npm_package_config_srcdir_polyfills $npm_package_config_srcdir_vendor $npm_package_config_testdir",
     "postwatch": "npm run build:js -s",
 
     "watch:css": "watch 'npm run build:css -s' $npm_package_config_srcdir_styles"

@@ -1,14 +1,14 @@
 {
-  "name": "node-project-scaffold",
+  "name": "psr",
   "version": "0.1.0",
-  "description": "A Node.js project scaffold",
+  "description": "A Node.js implementation of the Paper-Scissors-Rock game",
   "author": "John Ryan <johnryan1982@gmail.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/johnryan1982/node-project-scaffold.git"
+    "url": "git+https://github.com/johnryan1982/psr.git"
   },
-  "homepage": "https://bitbucket.org/johnryan1982/node-project-scaffold#README",
+  "homepage": "https://github.com/johnryan1982/psr#README",
   "devDependencies": {
     "browserify": "^13.0.0",
     "clear-cli": "^1.0.1",
@@ -51,7 +51,7 @@
     "build": "npm run build:js -s && npm run build:css -s",
 
     "prebuild:css": "printf '=> compiling css: '",
-    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/main.min.css",
+    "build:css": "lessc --clean-css $npm_package_config_srcdir_styles/main.less $npm_package_config_distdir/bundle.min.css",
     "postbuild:css": "npm run complete:subtask -s",
 
     "prebuild:js": "npm run coverage:js -s",
@@ -74,7 +74,7 @@
     "postlint:js": "npm run complete:subtask -s",
 
     "preminify:js": "printf '=> minifying js: '",
-    "minify:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/main.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
+    "minify:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/bundle.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
     "postminify:js": "npm run complete:subtask -s",
 
     "prestyle:js": "printf '=> validating js style: '",

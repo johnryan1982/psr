@@ -36,6 +36,29 @@ describe('playerlib', function() {
       for (i = 0; i < testsLen; i += 1) {
         fnNoThrow(testcases[i], player, 'playerlib');
       }
+
+      assert.equal(player({}).name, 'Prof. Plum', 'expecting "player.name" to default to \'Prof. Plum\'');
+    });
+
+    it('creates a player from "opts"', function() {
+      var name = 'Bill',
+        p = player({ name: name });
+
+      assert.equal(p.name, name, 'expecting "player.name" to be "' + name + '"');
+    });
+  });
+
+  describe('#player property setters', function() {
+    it('set "name"', function() {
+      var name = 'Bill',
+        newName = ' Ben ',
+        p = player({ name: name });
+
+      p.name = '';
+      assert.equal(p.name, name, 'expecting "player.name = \'\'" to be ignored');
+
+      p.name = newName;
+      assert.equal(p.name, newName.trim(), 'expecting "player.name = ..." to update property');
     });
   });
 });

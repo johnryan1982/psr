@@ -20,6 +20,7 @@ module.exports = function(config) {
     files: [
       'src/js/**/*.js',
       'src/polyfills/**/*.js',
+      'src/utils/**/*.js',
       'test/**/*.js',
 
       /// explicitly define vendor scripts
@@ -36,6 +37,7 @@ module.exports = function(config) {
     preprocessors: {
       'src/js/**/*.js': ['commonjs'],
       'src/polyfills/**/*.js': ['commonjs'],
+      'src/utils/**/*.js': ['commonjs'],
       'test/**/*.js': ['commonjs'],
 
       /// explicitly define vendor scripts

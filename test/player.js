@@ -1,5 +1,5 @@
 /*globals describe:false,it:false*/
-var assert = require('../src/js/assert.js'),
+var assert = require('../src/utils/assert.js'),
 
   /// libs
   playerlib = require('../src/js/player.js'),

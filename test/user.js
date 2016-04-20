@@ -36,18 +36,30 @@ describe('userlib', function() {
       for (i = 0; i < testsLen; i += 1) {
         fnNoThrow(testcases[i], user, 'userlib');
       }
+
+      assert.equal(user({}).name, 'Mr. Green', 'expecting "player.name" to default to \'Mr. Green\'');
     });
 
     it('creates a user from "opts"', function() {
-      var name = 'Jim',
+      var name = 'Jack',
         u = user({ name: name });
 
       assert.equal(u.name, name, 'expecting "user.name" to be "' + name + '"');
     });
   });
 
-  describe('#user getters/setters', function() {
-    it('set "name"');
+  describe('#user property setters', function() {
+    it('set "name"', function() {
+      var name = 'Jack',
+        newName = ' Jill ',
+        u = user({ name: name });
+
+      u.name = '';
+      assert.equal(u.name, name, 'expecting "user.name = \'\'" to be ignored');
+
+      u.name = newName;
+      assert.equal(u.name, newName.trim(), 'expecting "user.name = ..." to update property');
+    });
   });
 });
 

@@ -6,13 +6,27 @@
     user;
 
   /// usage:
-  ///   var p = user({/* ... */});
+  ///   var u = user({/* ... */});
   user = function user(opts) {
     opts = opts || {};
 
-    return Object.freeze({
-      name: typeof opts !== 'undefined' && opts.hasOwnProperty('name') &&
-        typeof opts.name === 'string' ? opts.name : 'The Dark Night'
+    var name = typeof opts !== 'undefined' && opts.hasOwnProperty('name') &&
+      typeof opts.name === 'string' ? opts.name : 'Mr. Green';
+
+    return Object.defineProperties({}, {
+      name: {
+        configurable: false,
+        enumerable: true,
+        get: function() {
+          return name;
+        },
+        set: function(val) {
+          if (typeof val === 'undefined' || typeof val !== 'string' || val.toString() === '') {
+            return;
+          }
+          name = val.trim();
+        }
+      }
     });
   };
 

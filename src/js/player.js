@@ -20,4 +20,7 @@
   });
 
   module.exports = api;
+
+  /// gratuitous logging to prove it works in the browser
+  console.log('hello from player.js');
 }());

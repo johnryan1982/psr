@@ -8,7 +8,7 @@ var assert = require('../src/utils/assert.js'),
   game = gamelib.game,
 
   /// other
-  immutableTypeErrorRegExp = /(read([- ]?)only|Object doesn\'t support this action)/;
+  immutableTypeErrorRegExp = /(read([- ]?)only|Object doesn\'t support this action|object is not extensible)/;
 
 describe('gamelib', function() {
   describe('#gamelib API', function() {
@@ -57,7 +57,6 @@ describe('gamelib', function() {
         'string',
         4,
         Number.NaN,
-        true,
         false,
         function() { return true; }
       ],

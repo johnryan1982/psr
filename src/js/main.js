@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  require('./game.js');
+
   var api = {
     name: 'Teresa'
   };

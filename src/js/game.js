@@ -14,7 +14,8 @@
     opts = opts || {};
 
     var state = {
-      mode: GAME_MODES.indexOf(opts.mode) > -1 ? opts.mode : GAME_MODES[0]
+      mode: typeof opts !== 'undefined' && opts.hasOwnProperty('mode') &&
+        GAME_MODES.indexOf(opts.mode) > -1 ? opts.mode : GAME_MODES[0]
     };
 
     Object.defineProperty(state, 'players', {
@@ -62,4 +63,7 @@
   });
 
   module.exports = api;
+
+  /// gratuitous logging to prove it works in the browser
+  console.log('hello from game.js');
 }());

@@ -1,91 +1,110 @@
 /*globals describe:false,it:false*/
 var assert = require('../src/js/assert.js'),
+
+  /// libs
   gamelib = require('../src/js/game.js'),
-  game = gamelib.game;
+
+  /// lib APIs
+  game = gamelib.game,
+
+  /// other
+  immutableTypeErrorRegExp = /(read([- ]?)only|Object doesn\'t support this action)/;
 
 describe('gamelib', function() {
   describe('#gamelib API', function() {
-    it('should have an immutable "c2c" (computer-vs-computer) property', function() {
-      assert.property(gamelib, 'c2c', 'property "c2c" is missing');
-      assert.equal(gamelib.c2c, 'c2c', 'expecting "c2c" to be "c2c"; received "' +
-        gamelib.c2c + '"');
-
-      gamelib.c2c = 'a';
-      assert.equal(gamelib.c2c, 'c2c', '"c2c" should be immutable');
+    /// static, immutable properties
+    it('has a static "game" factory function', function() {
+      gamelib.game = false;
+      assert.isFunction(gamelib.game,
+        'expecting "gamelib.game" to be a function; received "' + gamelib.game + '"');
     });
 
-    it('should have an immutable "p2c" (player-vs-computer) property', function() {
-      assert.property(gamelib, 'p2c', 'property "p2c" is missing');
-      assert.equal(gamelib.p2c, 'p2c', 'expecting "p2c" to be "p2c"; received "' +
-        gamelib.p2c + '"');
+    it('has a static, immutable "modeCC" (computer-vs-computer) property', function() {
+      gamelib.modeCC = 'a';
+      assert.equal(gamelib.modeCC, 'cc',
+        'expecting "gamelib.modeCC" to be "cc"; received "' + gamelib.modeCC + '"');
+    });
 
-      gamelib.p2c = 'a';
-      assert.equal(gamelib.p2c, 'p2c', '"p2c" should be immutable');
+    it('has a static, immutable "modePC" (player-vs-computer) property', function() {
+      gamelib.modePC = 'a';
+      assert.equal(gamelib.modePC, 'pc',
+        'expecting "gamelib.modePC" to be "pc"');
+    });
+
+    it('has a static, immutable "modes" property', function() {
+      var expected = ['cc', 'pc'];
+      assert.deepEqual(gamelib.modes, expected,
+        'expecting "gamelib.modes" to be ' + JSON.stringify(expected));
+
+      assert.throws(
+        function() {
+          gamelib.modes.push('a');
+        },
+        TypeError,
+        immutableTypeErrorRegExp,
+        'attempting to modify "modes" should throw an error'
+      );
     });
   });
 
   describe('#factory method object construction', function() {
     it('handles empty/incorrect input "opts"', function() {
-      var noOptsGame = game(),
-        undefinedOptsGame = game(undefined),
-        nullOptsGame = game(null),
-        emptyOptsGame = game({}),
-        arrayOptsGame = game([]),
-        stringOptsGame = game('string'),
-        numberOptsGame = game(4),
-        isNaNOptsGame = game(Number.NaN),
-        boolTOptsGame = game(true),
-        boolFOptsGame = game(false),
-        callbackOptsGame = game(function() { return true; });
+      var testcases = [
+        undefined,
+        null,
+        {},
+        [],
+        'string',
+        4,
+        Number.NaN,
+        true,
+        false,
+        function() { return true; }
+      ],
+      i,
+      testsLen = testcases.length;
 
-      assert.doesNotThrow(function() {
-        return noOptsGame;
-      }, Error, 'expecting "game()" not to fail');
-      assert.doesNotThrow(function() {
-        return undefinedOptsGame;
-      }, Error, 'expecting "game(undefined)" not to fail');
-      assert.doesNotThrow(function() {
-        return nullOptsGame;
-      }, Error, 'expecting "game(null)" not to fail');
-      assert.doesNotThrow(function() {
-        return emptyOptsGame;
-      }, Error, 'expecting "game({})" not to fail');
-      assert.doesNotThrow(function() {
-        return arrayOptsGame;
-      }, Error, 'expecting "game([])" not to fail');
-      assert.doesNotThrow(function() {
-        return stringOptsGame;
-      }, Error, 'expecting "game(\'string\')" not to fail');
-      assert.doesNotThrow(function() {
-        return numberOptsGame;
-      }, Error, 'expecting "game(4)" not to fail');
-      assert.doesNotThrow(function() {
-        return isNaNOptsGame;
-      }, Error, 'expecting "game(Number.NaN)" not to fail');
-      assert.doesNotThrow(function() {
-        return boolTOptsGame;
-      }, Error, 'expecting "game(true)" not to fail');
-      assert.doesNotThrow(function() {
-        return boolFOptsGame;
-      }, Error, 'expecting "game(false)" not to fail');
-      assert.doesNotThrow(function() {
-        return callbackOptsGame;
-      }, Error, 'expecting "game(function() {...})" not to fail');
+      for (i = 0; i < testsLen; i += 1) {
+        fnNoThrow(testcases[i], game, 'gamelib');
+      }
     });
 
-    it('returns an object with a "type" property', function() {
-      var game_c2c = game();
-      assert.property(game_c2c, 'type', 'expecting to find a "type" property');
-      assert.equal(game_c2c.type, 'c2c', 'expecting default "type" value to be "c2c"; received "' +
-        game_c2c.type + '"');
+    it('returns an object with a "mode" property', function() {
+      var ccGame = game(),
+        pcGame = game({ mode: 'pc' }),
+        defaultGame = game({ mode: 'X' });
 
-      var game_p2c = game({ type: 'p2c' });
-      assert.equal(game_p2c.type, 'p2c', 'expecting "type" value to be "p2c"; received "' +
-        game_p2c.type + '"');
+      assert.property(ccGame, 'mode');
 
-      var game_X = game({ type: 'X' });
-      assert.equal(game_X.type, 'c2c', 'expecting "type" value to be "c2c"; received "' +
-        game_p2c.type + '"');
+      assert.equal(ccGame.mode, 'cc', 'expecting "game.mode" value to default to "modeCC"; ' +
+        ' received "' + ccGame.mode + '"');
+      assert.equal(pcGame.mode, 'pc', 'expecting "game.mode" value to be "modePC"; ' +
+        ' received "' + pcGame.mode + '"');
+      assert.equal(defaultGame.mode, 'cc', 'expecting "game.mode" value to be "modeCC"; ' +
+        ' received "' + pcGame.mode + '"');
+    });
+
+    it('returns an object with an immutable "players" property', function() {
+      var ccGame = game();
+      assert.deepEqual(ccGame.players, ['a', 'b']);
+
+      assert.throws(
+        function() {
+          ccGame.players.push('c');
+        },
+        TypeError,
+        immutableTypeErrorRegExp,
+        'attempting to modify "players" should throw an error'
+      );
     });
   });
 });
+
+function fnNoThrow(testcase, apiFn, lib) {
+  var errMsg = 'expecting "' + [lib, apiFn.name].join('.') + '(' + JSON.stringify(testcase) +
+    ')" not to fail';
+
+  assert.doesNotThrow(function() {
+    return apiFn(testcase);
+  }, Error, errMsg);
+}

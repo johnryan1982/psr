@@ -1,13 +1,9 @@
 (function() {
   'use strict';
 
-  /// polyfill - no need to cache
-  require('../polyfills/object.assign.js');
-
   var
-    TYPE_C2C = 'c2c',
-    TYPE_P2C = 'p2c',
-    TYPES = [TYPE_C2C, TYPE_P2C],
+    /// immutable
+    GAME_MODES = Object.freeze(['cc', 'pc']),
 
     api = {},
     game;
@@ -17,38 +13,51 @@
   game = function game(opts) {
     opts = opts || {};
 
-    var state;
-
-    state = {
-      type: TYPES.indexOf(opts.type) > -1 ? opts.type : TYPE_C2C
+    var state = {
+      mode: GAME_MODES.indexOf(opts.mode) > -1 ? opts.mode : GAME_MODES[0]
     };
+
+    Object.defineProperty(state, 'players', {
+      configurable: false,
+      enumerable: true,
+      writable: false,
+      value: Object.freeze(['a', 'b'])
+    });
 
     return state;
   };
 
   Object.defineProperties(api, {
-    'game': {
-      enumerable: true,
+    /// (static) game
+    game: {
       configurable: false,
+      enumerable: true,
+      writable: false,
       value: game
     },
 
-    /** read-only, immutable properties */
-
-    /// 'c2c' type (computer-vs-computer)
-    'c2c': {
+    /// (static const) computer-vs-computer
+    modeCC: {
+      configurable: false,
       enumerable: true,
       writable: false,
-      configurable: false,
-      value: TYPE_C2C
+      value: GAME_MODES[0]
     },
 
-    /// 'p2c' type (player-vs-computer)
-    'p2c': {
+    /// (static const) player-vs-computer
+    modePC: {
+      configurable: false,
       enumerable: true,
       writable: false,
+      value: GAME_MODES[1]
+    },
+
+    /// (static) modes
+    modes: {
       configurable: false,
-      value: TYPE_P2C
+      enumerable: true,
+      writable: false,
+      value: GAME_MODES
     }
   });
 

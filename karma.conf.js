@@ -19,12 +19,14 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/**/*.js',
-      'src/polyfills/**/*.js',
-      'src/utils/**/*.js',
-      'test/**/*.js',
+      // 'src/polyfills/**/*.js',
+      // 'src/utils/**/*.js',
+      'test/*.js',
+      'test/utils/**/*.js',
 
       /// explicitly define vendor scripts
-      'src/vendor/chai-3.5.0.js'
+      // 'src/vendor/chai-3.5.0.js'
+      'test/vendor/chai-3.5.0.js'
     ],
 
 
@@ -36,12 +38,14 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'src/js/**/*.js': ['commonjs'],
-      'src/polyfills/**/*.js': ['commonjs'],
-      'src/utils/**/*.js': ['commonjs'],
-      'test/**/*.js': ['commonjs'],
+      // 'src/polyfills/**/*.js': ['commonjs'],
+      // 'src/utils/**/*.js': ['commonjs'],
+      'test/*.js': ['commonjs'],
+      'test/utils/**/*.js': ['commonjs'],
 
       /// explicitly define vendor scripts
-      'src/vendor/chai-3.5.0.js': ['commonjs']
+      // 'src/vendor/chai-3.5.0.js': ['commonjs']
+      'test/vendor/chai-3.5.0.js': ['commonjs']
     },
 
 

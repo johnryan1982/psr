@@ -13,16 +13,22 @@
   game = function game(opts) {
     opts = opts || {};
 
-    var state = {
-      mode: typeof opts !== 'undefined' && opts.hasOwnProperty('mode') &&
-        GAME_MODES.indexOf(opts.mode) > -1 ? opts.mode : GAME_MODES[0]
-    };
+    var mode = typeof opts !== 'undefined' && opts.hasOwnProperty('mode') &&
+      GAME_MODES.indexOf(opts.mode) > -1 ? opts.mode : GAME_MODES[0];
 
-    Object.defineProperty(state, 'players', {
-      configurable: false,
-      enumerable: true,
-      writable: false,
-      value: Object.freeze(['a', 'b'])
+    var state = Object.defineProperties({}, {
+      mode: {
+        configurable: false,
+        enumerable: true,
+        writable: false,
+        value: mode
+      },
+      players: {
+        configurable: false,
+        enumerable: true,
+        writable: false,
+        value: Object.freeze(['a', 'b'])
+      }
     });
 
     return state;

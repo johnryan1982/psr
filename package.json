@@ -34,11 +34,11 @@
     "distdir": "dist",
     "srcdir": "src",
     "srcdir_js": "src/js",
-    "srcdir_polyfills": "src/polyfills",
+    "srcdir_polyfills": "src/js/polyfills",
     "srcdir_styles": "src/styles",
-    "srcdir_utils": "src/utils",
-    "srcdir_vendor": "src/vendor",
-    "testdir": "test"
+    "testdir": "test",
+    "testdir_utils": "test/utils",
+    "testdir_vendor": "test/vendor"
   },
   "scripts": {
     "install": "npm run githooks -s",
@@ -68,14 +68,14 @@
     "complete:subtask": "printf '.\n'",
 
     "precoverage:js": "printf '=> generating coverage report: \n'",
-    "coverage:js": "istanbul cover _mocha -x $npm_package_config_srcdir_vendor/**/*.js -x $npm_package_config_srcdir_utils/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- -R spec",
+    "coverage:js": "istanbul cover _mocha -x $npm_package_config_testdir_vendor/**/*.js -x $npm_package_config_testdir_utils/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- -R spec",
 
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",
     "postlint:js": "npm run complete:subtask -s",
 
     "preminify:js": "printf '=> minifying js: '",
-    "minify:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/bundle.min.js -u $npm_package_config_srcdir_vendor/**/*.js",
+    "minify:js": "browserify $npm_package_config_srcdir_js/main.js | uglifyjs -o $npm_package_config_distdir/bundle.min.js -u $npm_package_config_testdir_vendor/**/*.js",
     "postminify:js": "npm run complete:subtask -s",
 
     "prestyle:js": "printf '=> validating js style: '",
@@ -88,7 +88,7 @@
 
     "serve": "reload -p 8888",
 
-    "watch": "watch 'npm run test -s' $npm_package_config_srcdir_js $npm_package_config_srcdir_utils $npm_package_config_srcdir_vendor $npm_package_config_testdir",
+    "watch": "watch 'npm run test -s' $npm_package_config_srcdir_js $npm_package_config_testdir_utils $npm_package_config_testdir $npm_package_config_testdir_vendor",
     "postwatch": "npm run build:js -s",
 
     "watch:css": "watch 'npm run build:css -s' $npm_package_config_srcdir_styles"

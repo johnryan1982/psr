@@ -1,5 +1,7 @@
-node_modules/**
-.git/**
+node_modules
+.git
 .gitattributes
 .gitconfig
 .gitignore
+src/js/polyfills
+test/vendor

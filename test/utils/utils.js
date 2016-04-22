@@ -10,7 +10,7 @@
     ///   [IE] Object doesn't support this action
     ///   [Chrome] object is not extensible
     ///   [Mobile Safari] readonly
-    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible)(?:.*)/,
+    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible|Cannot set property (?:.*) which has only a getter)(?:.*)/,
 
     /// custom TypeError thrown when a function is expecting to receive an [optionally decorated] object
     objectExpectedError = /check params: expecting (?:.*), received (?:.*)/;

@@ -28,6 +28,7 @@
       });
     });
 
+    /// * expect a 'usr' configuration parameter and return an object
     describe('#factory method object construction', function() {
       it('handles empty/incorrect input "opts"', function() {
         var testcases = [
@@ -61,17 +62,83 @@
       });
     });
 
-    describe('#player property setters', function() {
-      it('set "name"', function() {
-        var name = 'Prof. Plum',
-          newName = ' Rev. Green ',
-          p = player({ name: name });
+    describe('#player.score', function() {
+      it('"player.score" returns an object with "wins" and "losses" properties', function() {
+        var p = player({ name: 'Prof. Plum' }),
+          startingScore = {
+            wins: 0,
+            losses: 0
+          };
 
-        p.name = '';
-        assert.equal(p.name, name, 'expecting "player.name = \'\'" to be ignored');
+        assert.throws(
+          function() {
+            p.score.wins = 5;
+          },
+          TypeError,
+          utils.immutableTypeErrorRegExp,
+          'expecting "player.score.wins" to be immutable'
+        );
 
-        p.name = newName;
-        assert.equal(p.name, newName.trim(), 'expecting "player.name = ..." to update property');
+        assert.throws(
+          function() {
+            p.score.losses = 5;
+          },
+          TypeError,
+          utils.immutableTypeErrorRegExp,
+          'expecting "player.score.losses" to be immutable'
+        );
+
+        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
+      });
+
+      it('"updateScores" method updates "player.score" properties accordingly', function() {
+        var p = player({ name: 'Prof. Plum' }),
+          startingScore = {
+            wins: 0,
+            losses: 0
+          };
+
+        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
+
+        p.updateScores(1); /// win
+        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to have updated');
+        assert.equal(p.score.losses, 0, 'expecting "player.score.losses" to remain as 0');
+
+        p.updateScores(-1); /// lose
+        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to to remain as 1');
+        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" have updated');
+
+        p.updateScores(0); /// draw
+        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to remain as 1');
+        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" to remain as 1');
+
+        assert.throws(
+          function() {
+            p.updateScores(null);
+          },
+          TypeError,
+          'expecting "n" to be in [-1,0,1]',
+          '"updateScores" expects an integer'
+        );
+      });
+
+      it('"resetScores" method reset "player.score" properties to zero', function() {
+        var p = player({ name: 'Prof. Plum' }),
+          startingScore = {
+            wins: 0,
+            losses: 0
+          };
+
+        p.updateScores(1); /// win
+        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to have updated');
+        assert.equal(p.score.losses, 0, 'expecting "player.score.losses" to remain as 0');
+
+        p.updateScores(-1); /// lose
+        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to to remain as 1');
+        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" have updated');
+
+        p.resetScores();
+        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
       });
     });
   });

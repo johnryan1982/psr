@@ -51,7 +51,9 @@
 
       it('creates a user from "opts"', function() {
         var name = 'Jack',
-          u = user({ name: name });
+          u = user({
+            name: name
+          });
 
         assert.equal(u.name, name, 'expecting "user.name" to be "' + name + '"');
       });
@@ -61,7 +63,9 @@
       it('set "name"', function() {
         var name = 'Jack',
           newName = ' Jill ',
-          u = user({ name: name });
+          u = user({
+            name: name
+          });
 
         u.name = '';
         assert.equal(u.name, name, 'expecting "user.name = \'\'" to be ignored');

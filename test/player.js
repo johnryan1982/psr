@@ -56,7 +56,9 @@
 
       it('creates a player from "opts"', function() {
         var name = 'Prof. Plum',
-          p = player({ name: name });
+          p = player({
+            name: name
+          });
 
         assert.equal(p.name, name, 'expecting "player.name" to be "' + name + '"');
       });
@@ -64,7 +66,9 @@
 
     describe('#player.score', function() {
       it('"player.score" returns an object with "wins" and "losses" properties', function() {
-        var p = player({ name: 'Prof. Plum' }),
+        var p = player({
+            name: 'Prof. Plum'
+          }),
           startingScore = {
             wins: 0,
             losses: 0
@@ -92,7 +96,9 @@
       });
 
       it('"updateScores" method updates "player.score" properties accordingly', function() {
-        var p = player({ name: 'Prof. Plum' }),
+        var p = player({
+            name: 'Prof. Plum'
+          }),
           startingScore = {
             wins: 0,
             losses: 0
@@ -123,7 +129,9 @@
       });
 
       it('"resetScores" method reset "player.score" properties to zero', function() {
-        var p = player({ name: 'Prof. Plum' }),
+        var p = player({
+            name: 'Prof. Plum'
+          }),
           startingScore = {
             wins: 0,
             losses: 0

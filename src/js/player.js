@@ -34,7 +34,6 @@
       },
 
       updateScores: function(n) {
-        // if (Number.isNaN(Number(n))) {
         if (typeof n !== 'number') {
           throw new TypeError('expecting "n" to be in [-1,0,1]');
         }

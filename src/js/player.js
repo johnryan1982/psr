@@ -2,7 +2,7 @@
   'use strict';
 
   var
-    api = {},
+    api,
     player;
 
   /// usage:
@@ -10,34 +10,24 @@
   player = function player(opts) {
     opts = opts || {};
 
-    var name = typeof opts !== 'undefined' && opts.hasOwnProperty('name') &&
-      typeof opts.name === 'string' ? opts.name : 'Prof. Plum';
+    var name = typeof opts === 'object' && opts.hasOwnProperty('name') &&
+      typeof opts.name === 'string' && opts.name.trim() !== '' ? opts.name : 'Anon';
 
-    return Object.defineProperties({}, {
-      name: {
-        configurable: false,
-        enumerable: true,
-        get: function() {
-          return name;
-        },
-        set: function(val) {
-          if (typeof val === 'undefined' || typeof val !== 'string' || val.toString() === '') {
-            return;
-          }
-          name = val.trim();
+    return Object.freeze({
+      get name() {
+        return name;
+      },
+      set name(val) {
+        if (typeof val === 'undefined' || typeof val !== 'string' || val.trim() === '') {
+          return;
         }
+        name = val.trim();
       }
     });
   };
 
-  Object.defineProperties(api, {
-    /// (static) player
-    player: {
-      configurable: false,
-      enumerable: true,
-      writable: false,
-      value: player
-    }
+  api = Object.freeze({
+    player: player
   });
 
   module.exports = api;

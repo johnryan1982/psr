@@ -15,6 +15,8 @@
     describe('#playerlib API', function() {
       /// static, immutable properties
       it('has a static "player" factory function', function() {
+        assert.isFunction(playerlib.player);
+
         assert.throws(
           function() {
             playerlib.player = 'a';
@@ -40,17 +42,19 @@
           function() { return true; }
         ],
         i,
-        testsLen = testcases.length;
+        testsLen = testcases.length,
+        defaultName = 'Anon';
 
         for (i = 0; i < testsLen; i += 1) {
-          fnNoThrow(testcases[i], player, 'playerlib');
+          incorrectPlayerFactoryInvocation(testcases[i], player, 'playerlib');
         }
 
-        assert.equal(player({}).name, 'Prof. Plum', 'expecting "player.name" to default to \'Prof. Plum\'');
+        assert.equal(player({}).name, defaultName, 'expecting "player.name" to default to \'' +
+          defaultName + '\'');
       });
 
       it('creates a player from "opts"', function() {
-        var name = 'Bill',
+        var name = 'Prof. Plum',
           p = player({ name: name });
 
         assert.equal(p.name, name, 'expecting "player.name" to be "' + name + '"');
@@ -59,8 +63,8 @@
 
     describe('#player property setters', function() {
       it('set "name"', function() {
-        var name = 'Bill',
-          newName = ' Ben ',
+        var name = 'Prof. Plum',
+          newName = ' Rev. Green ',
           p = player({ name: name });
 
         p.name = '';
@@ -72,12 +76,24 @@
     });
   });
 
-  function fnNoThrow(testcase, apiFn, lib) {
-    var errMsg = 'expecting "' + [lib, apiFn.name].join('.') + '(' + JSON.stringify(testcase) +
-      ')" not to fail';
+  function incorrectPlayerFactoryInvocation(config) {
+    var errMsgPre = 'expecting "playerlib.player(',
+      errMsgPost = ')" to default to \'Anon\'',
+      incorrectConfig,
+      incorrectNameProperty,
+      obj;
 
-    assert.doesNotThrow(function() {
-      return apiFn(testcase);
-    }, Error, errMsg);
+    incorrectConfig = player(config);
+    assert.equal(incorrectConfig.name, 'Anon', errMsgPre + JSON.stringify(config) + errMsgPost);
+
+    if (typeof config === 'string') {
+      return;
+    }
+
+    obj = {
+      name: config
+    };
+    incorrectNameProperty = player(obj);
+    assert.equal(incorrectNameProperty.name, 'Anon', errMsgPre + JSON.stringify(obj) + errMsgPost);
   }
 }());

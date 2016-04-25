@@ -14,7 +14,7 @@
   describe('playerlib', function() {
     describe('#playerlib API', function() {
       /// static, immutable properties
-      it('has a static "player" factory function', function() {
+      it('#has a static "player" factory function', function() {
         assert.isFunction(playerlib.player);
 
         assert.throws(
@@ -30,97 +30,96 @@
 
     /// * expect a 'usr' configuration parameter and return an object
     describe('#factory method object construction', function() {
-      it('handles empty/incorrect input "opts"', function() {
-        var testcases = [
-          undefined,
-          null,
-          {},
-          [],
-          'string',
-          4,
-          Number.NaN,
-          false,
-          function() { return true; }
-        ],
-        i,
-        testsLen = testcases.length,
-        defaultName = 'Anon';
+      it('#handles empty/incorrect input "opts"', function() {
+        var opts, i, optsLen, defaultName;
 
-        for (i = 0; i < testsLen; i += 1) {
-          incorrectPlayerFactoryInvocation(testcases[i], player, 'playerlib');
+        opts = [
+          undefined, null, {}, [], 'string', 4, Number.NaN, false, function() { return true; }
+        ];
+        optsLen = opts.length;
+
+        for (i = 0; i < optsLen; i += 1) {
+          incorrectPlayerFactoryInvocation(opts[i], player, 'playerlib');
         }
 
-        assert.equal(player({}).name, defaultName, 'expecting "player.name" to default to \'' +
-          defaultName + '\'');
+        defaultName = 'Anon';
+        assert.equal(player({}).name, defaultName, 'expecting "playerObj.name" to default to "' +
+          defaultName + '"');
       });
 
-      it('creates a player from "opts"', function() {
-        var name = 'Prof. Plum',
-          p = player({
-            name: name
-          });
+      it('#returns a (playerObj) object from "opts"', function() {
+        var name, playerObj;
 
-        assert.equal(p.name, name, 'expecting "player.name" to be "' + name + '"');
+        name = 'Prof. Plum';
+        playerObj = player({
+          name: name
+        });
+
+        assert.equal(playerObj.name, name, 'expecting "playerObj.name" to be "' + name + '"');
       });
     });
 
-    describe('#player.score', function() {
-      it('"player.score" returns an object with "wins" and "losses" properties', function() {
-        var p = player({
-            name: 'Prof. Plum'
-          }),
-          startingScore = {
-            wins: 0,
-            losses: 0
-          };
+    describe('#playerObj.score', function() {
+      it('#returns an object with "wins" and "losses" properties', function() {
+        var playerObj, startingScore;
+
+        playerObj = player({
+          name: 'Prof. Plum'
+        });
+        startingScore = {
+          wins: 0,
+          losses: 0
+        };
 
         assert.throws(
           function() {
-            p.score.wins = 5;
+            playerObj.score.wins = 5;
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
-          'expecting "player.score.wins" to be immutable'
+          'expecting "playerObj.score.wins" to be immutable'
         );
 
         assert.throws(
           function() {
-            p.score.losses = 5;
+            playerObj.score.losses = 5;
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
-          'expecting "player.score.losses" to be immutable'
+          'expecting "playerObj.score.losses" to be immutable'
         );
 
-        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
+        assert.deepEqual(playerObj.score, startingScore, 'expecting "playerObj.score" to default to zero');
       });
 
-      it('"updateScores" method updates "player.score" properties accordingly', function() {
-        var p = player({
-            name: 'Prof. Plum'
-          }),
-          startingScore = {
-            wins: 0,
-            losses: 0
-          };
+      it('#updateScores method updates "playerObj.score" properties accordingly', function() {
+        var playerObj, startingScore;
 
-        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
+        playerObj = player({
+          name: 'Prof. Plum'
+        });
+        startingScore = {
+          wins: 0,
+          losses: 0
+        };
 
-        p.updateScores(1); /// win
-        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to have updated');
-        assert.equal(p.score.losses, 0, 'expecting "player.score.losses" to remain as 0');
+        assert.deepEqual(playerObj.score, startingScore, 'expecting "playerObj.score" to default to zero');
 
-        p.updateScores(-1); /// lose
-        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to to remain as 1');
-        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" have updated');
+        playerObj.updateScores(1); /// win
+        assert.equal(playerObj.score.wins, 1, 'expecting "playerObj.score.wins" to have updated');
+        assert.equal(playerObj.score.losses, 0, 'expecting "playerObj.score.losses" to remain as 0');
 
-        p.updateScores(0); /// draw
-        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to remain as 1');
-        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" to remain as 1');
+        playerObj.updateScores(-1); /// lose
+        assert.equal(playerObj.score.wins, 1, 'expecting "playerObj.score.wins" to to remain as 1');
+        assert.equal(playerObj.score.losses, 1, 'expecting "playerObj.score.losses" have updated');
+
+        playerObj.updateScores(0); /// draw
+        assert.equal(playerObj.score.wins, 1, 'expecting "playerObj.score.wins" to remain as 1');
+        assert.equal(playerObj.score.losses, 1, 'expecting "playerObj.score.losses" to remain as 1');
 
         assert.throws(
           function() {
-            p.updateScores(null);
+            playerObj.updateScores(null);
           },
           TypeError,
           'expecting "n" to be in [-1,0,1]',
@@ -128,36 +127,36 @@
         );
       });
 
-      it('"resetScores" method reset "player.score" properties to zero', function() {
-        var p = player({
-            name: 'Prof. Plum'
-          }),
-          startingScore = {
-            wins: 0,
-            losses: 0
-          };
+      it('#resetScores method reset "playerObj.score" properties to zero', function() {
+        var playerObj, startingScore;
 
-        p.updateScores(1); /// win
-        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to have updated');
-        assert.equal(p.score.losses, 0, 'expecting "player.score.losses" to remain as 0');
+        playerObj = player({
+          name: 'Prof. Plum'
+        });
+        startingScore = {
+          wins: 0,
+          losses: 0
+        };
 
-        p.updateScores(-1); /// lose
-        assert.equal(p.score.wins, 1, 'expecting "player.score.wins" to to remain as 1');
-        assert.equal(p.score.losses, 1, 'expecting "player.score.losses" have updated');
+        playerObj.updateScores(1); /// win
+        assert.equal(playerObj.score.wins, 1, 'expecting "playerObj.score.wins" to have updated');
+        assert.equal(playerObj.score.losses, 0, 'expecting "playerObj.score.losses" to remain as 0');
 
-        p.resetScores();
-        assert.deepEqual(p.score, startingScore, 'expecting "player.score" to default to zero');
+        playerObj.updateScores(-1); /// lose
+        assert.equal(playerObj.score.wins, 1, 'expecting "playerObj.score.wins" to to remain as 1');
+        assert.equal(playerObj.score.losses, 1, 'expecting "playerObj.score.losses" have updated');
+
+        playerObj.resetScores();
+        assert.deepEqual(playerObj.score, startingScore, 'expecting "playerObj.score" to default to zero');
       });
     });
   });
 
   function incorrectPlayerFactoryInvocation(config) {
-    var errMsgPre = 'expecting "playerlib.player(',
-      errMsgPost = ')" to default to \'Anon\'',
-      incorrectConfig,
-      incorrectNameProperty,
-      obj;
+    var errMsgPre, errMsgPost, incorrectConfig, incorrectNameProperty, obj;
 
+    errMsgPre = 'expecting "playerlib.player(';
+    errMsgPost = ')" to default to \'Anon\'';
     incorrectConfig = player(config);
     assert.equal(incorrectConfig.name, 'Anon', errMsgPre + JSON.stringify(config) + errMsgPost);
 

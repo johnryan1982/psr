@@ -29,19 +29,12 @@
     });
 
     describe('#factory method object construction', function() {
-      it('handles empty/incorrect input "opts"', function() {
-        var opts = [
-          undefined,
-          null,
-          {},
-          [],
-          'string',
-          4,
-          Number.NaN,
-          false,
-          function() { return true; }
-        ],
-        i,
+      it('#handles empty/incorrect input "opts"', function() {
+        var opts, optsLen, i;
+
+        opts = [
+          undefined, null, {}, [], 'string', 4, Number.NaN, false, function() { return true; }
+        ];
         optsLen = opts.length;
 
         for (i = 0; i < optsLen; i += 1) {
@@ -49,54 +42,50 @@
         }
       });
 
-      it('handles incorrectly configured input "opts"', function() {
-        var opts = [
-          /// incorrect opts.name
-          {
-            name: 4
-          },
+      it('#handles incorrectly configured input "opts"', function() {
+        var opts, optsLen, i;
 
-          /// incorrect opts.defeats
-          {
-            name: 'correct'
+        opts = [
+          { name: 4 }, /// incorrect opts.name
+          { name: 'correct' } /// incorrect opts.defeats
+        ];
+        optsLen = opts.length;
+
+        for (i = 0; i < optsLen; i += 1) {
+          utils.incorrectFactoryInvocation(opts[i], weapon, 'weaponlib');
+        }
+      });
+
+      it('#returns a (weaponObj) object from "opts"', function() {
+        var opts, paperObj;
+
+        opts = {
+          name: 'Paper',
+          defeats: {
+            'Rock': 'covers'
           }
-        ],
-        i,
-        optsLen = opts.length;
-
-        for (i = 0; i < optsLen; i += 1) {
-          utils.incorrectFactoryInvocation(opts[i], weapon, 'weaponlib');
-        }
-      });
-
-      it('returns an immutable object', function() {
-        var opts = {
-            name: 'Paper',
-            defeats: {
-              'Rock': 'covers'
-            }
-          },
-          p = weapon(opts);
+        };
+        paperObj = weapon(opts);
 
         assert.throws(
           function() {
-            p.name = 'Rock';
+            paperObj.name = 'Rock';
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
-          'attempting to modify "weapon.name" should throw an error'
+          'attempting to modify "weaponObj.name" should throw an error'
         );
 
         assert.throws(
           function() {
-            p.defeats.Spock = 'disproves';
+            paperObj.defeats.Spock = 'disproves';
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
-          'attempting to modify "weapon.defeats" should throw an error'
+          'attempting to modify "weaponObj.defeats" should throw an error'
         );
 
-        assert.deepEqual(p, opts, 'modifications to weapon properties should not be possible');
+        assert.deepEqual(paperObj, opts, 'modifications to weaponObj properties should not be possible');
       });
     });
   });

@@ -33,6 +33,7 @@
         });
       },
 
+      /// todo: rename to "update"
       updateScores: function(n) {
         if (typeof n !== 'number') {
           throw new TypeError('expecting "n" to be in [-1,0,1]');
@@ -47,6 +48,7 @@
         }
       },
 
+      /// todo: rename to "reset"
       resetScores: function() {
         wins = 0;
         losses = 0;

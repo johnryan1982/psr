@@ -14,7 +14,7 @@
   describe('userlib', function() {
     describe('#userlib API', function() {
       /// static, immutable properties
-      it('has a static "user" factory function', function() {
+      it('#has a static "user" factory function', function() {
         assert.throws(
           function() {
             userlib.user = 'a';
@@ -27,51 +27,47 @@
     });
 
     describe('#factory method object construction', function() {
-      it('handles empty/incorrect input "opts"', function() {
-        var testcases = [
-          undefined,
-          null,
-          {},
-          [],
-          'string',
-          4,
-          Number.NaN,
-          false,
-          function() { return true; }
-        ],
-        i,
-        testsLen = testcases.length;
+      it('#handles empty/incorrect input "opts"', function() {
+        var opts, optsLen, i;
 
-        for (i = 0; i < testsLen; i += 1) {
-          utils.shouldNotThrow(testcases[i], user, 'userlib');
+        opts = [
+          undefined, null, {}, [], 'string', 4, Number.NaN, false, function() { return true; }
+        ];
+        optsLen = opts.length;
+
+        for (i = 0; i < optsLen; i += 1) {
+          utils.shouldNotThrow(opts[i], user, 'userlib');
         }
 
         assert.equal(user({}).name, 'Mr. Green', 'expecting "player.name" to default to \'Mr. Green\'');
       });
 
-      it('creates a user from "opts"', function() {
-        var name = 'Jack',
-          u = user({
-            name: name
-          });
+      it('#return a (userObj) object from "opts"', function() {
+        var name, userObj;
 
-        assert.equal(u.name, name, 'expecting "user.name" to be "' + name + '"');
+        name = 'Jack';
+        userObj = user({
+          name: name
+        });
+        assert.equal(userObj.name, name, 'expecting "userObj.name" to be "' + name + '"');
       });
     });
 
-    describe('#user property setters', function() {
-      it('set "name"', function() {
-        var name = 'Jack',
-          newName = ' Jill ',
-          u = user({
-            name: name
-          });
+    describe('#userObj property setters', function() {
+      it('#name=', function() {
+        var name, newName, userObj;
 
-        u.name = '';
-        assert.equal(u.name, name, 'expecting "user.name = \'\'" to be ignored');
+        name = 'Jack';
+        newName = ' Jill ';
+        userObj = user({
+          name: name
+        });
 
-        u.name = newName;
-        assert.equal(u.name, newName.trim(), 'expecting "user.name = ..." to update property');
+        userObj.name = '';
+        assert.equal(userObj.name, name, 'expecting "userObj.name = \'\'" to be ignored');
+
+        userObj.name = newName;
+        assert.equal(userObj.name, newName.trim(), 'expecting "userObj.name = ..." to update property');
       });
     });
   });

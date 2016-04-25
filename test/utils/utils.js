@@ -10,12 +10,10 @@
     ///   [IE] Object doesn't support this action
     ///   [Chrome] object is not extensible
     ///   [Mobile Safari] readonly
-    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible|Cannot set property (?:.*) which has only a getter)(?:.*)/,
+    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible|Cannot set property (?:.*) which has only a getter|Cannot create property for a non-extensible object)(?:.*)/,
 
     /// custom TypeError thrown when a function is expecting to receive an [optionally decorated] object
     objectExpectedError = /check params: expecting (?:.*), received (?:.*)/;
-
-  function shouldThrow() {}
 
   function shouldNotThrow(testcase, apiFn, libname) {
     var errMsg = 'expecting "' + [libname, apiFn.name].join('.') + '(' + JSON.stringify(testcase) +
@@ -46,7 +44,6 @@
 
     /// functions
     incorrectFactoryInvocation: incorrectFactoryInvocation,
-    shouldThrow: shouldThrow,
     shouldNotThrow: shouldNotThrow
   });
 

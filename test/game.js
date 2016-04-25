@@ -43,37 +43,33 @@
 
     describe('#factory method object construction', function() {
       it('handles empty/incorrect input "opts"', function() {
-        var opts,
-          numOpts,
-          i,
-          j,
-          optsLen,
-          numOptsLen;
+        var opts, optsLen, i, numericOpts, numericOptsLen, j;
 
         opts = [
-          undefined, null, {}, [], 'string', 4, Number.NaN, false, function() { return true; }
+          undefined, null, {}, [], 'string', 3, Number.NaN, true, false, function() { return true; }
         ];
         optsLen = opts.length;
 
         for (i = 0; i < optsLen; i += 1) {
-          incorrectGameFactoryInvocation(opts[i]);
+          testGameFactoryInvocation(opts[i]);
         }
 
-        numOpts = [
-          -1, 0, 1, 6.0245, -Infinity, Infinity
-        ].concat(opts);
-        numOptsLen = numOpts.length;
+        testGameFactoryRoundsInvocation(-1, 1);
+        testGameFactoryRoundsInvocation(0, 1);
+        testGameFactoryRoundsInvocation(1, 1);
 
-        for (j = 0; j < numOptsLen; j += 1) {
-          incorrectGameFactoryRoundsInvocation(numOpts[j]);
-        }
+        testGameFactoryRoundsInvocation(-6.458, 7);
+        testGameFactoryRoundsInvocation(6.458, 7);
+
+        testGameFactoryRoundsInvocation(1e1, 11);
+        testGameFactoryRoundsInvocation(-1e1, 11);
+
+        testGameFactoryRoundsInvocation(Infinity, -1);
+        testGameFactoryRoundsInvocation(-Infinity, -1);
       });
 
-      it('returns an object with an immutable "mode" property', function() {
-        var gameUndefinedMode,
-          gameComputerVsComputer,
-          gamePlayerVsComputer,
-          gameUnknownConfig;
+      it('returns a (gameObj) object with an immutable "mode" property', function() {
+        var gameUndefinedMode, gameComputerVsComputer, gamePlayerVsComputer, gameUnknownConfig;
 
         gameUndefinedMode = game();
         assert.property(gameUndefinedMode, 'mode');
@@ -106,13 +102,13 @@
         );
       });
 
-      it('returns an object with an immutable "players" property', function() {
-        var g = game();
-        assert.deepEqual(g.players, ['a', 'b']);
+      it('returns a (gameObj) object with an immutable "players" list', function() {
+        var gameObj = game();
+        assert.deepEqual(gameObj.players, ['a', 'b']);
 
         assert.throws(
           function() {
-            g.players.push('c');
+            gameObj.players.push('c');
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
@@ -127,13 +123,13 @@
       ///     * <int> played
       /// * have the following methods:
       ///   * reset // reset game => reset player stats
-      it('returns an object with an immutable "rounds" object', function() {
-        var g = game(),
-          defaultRoundsObject;
+      it('returns a (gameObj) object with an immutable "rounds" object', function() {
+        var gameObj, defaultRoundsObject;
 
+        gameObj = game();
         assert.throws(
           function() {
-            g.rounds.played = 5;
+            gameObj.rounds.played = 5;
           },
           TypeError,
           utils.immutableTypeErrorRegExp,
@@ -145,40 +141,64 @@
           target: 2,
           played: 0
         };
-        assert.deepEqual(g.rounds, defaultRoundsObject, 'expecting "rounds" to be "' +
+        assert.deepEqual(gameObj.rounds, defaultRoundsObject, 'expecting "rounds" to be "' +
           JSON.stringify(defaultRoundsObject) + '"');
       });
+
+      it('"reset" method resets the "rounds" property, plus each "player.score" property');
     });
   });
 
-  function fnNoThrow(config, apiFn, lib) {
-    var errMsg = 'expecting "' + [lib, apiFn.name].join('.') + '(' + JSON.stringify(config) +
-      ')" not to fail';
+  function testGameFactoryInvocation(config) {
+    var gameObj;
 
     assert.doesNotThrow(function() {
-      return apiFn(config);
-    }, errMsg);
-  }
-
-  function incorrectGameFactoryInvocation(config) {
-    assert.doesNotThrow(function() {
-      game(config);
+      gameObj = game(config);
     });
+    testGameRoundsProperty(gameObj);
 
-    // assert.doesNotThrow(function() {
-    //   game({
-    //     mode: config,
-    //     rounds: config
-    //   });
-    // });
-  }
-
-  function incorrectGameFactoryRoundsInvocation(config) {
     assert.doesNotThrow(function() {
-      var g = game({
+      gameObj = game({
         rounds: config
       });
-      console.info(g.rounds);
     });
+    testGameRoundsProperty(gameObj);
+  }
+
+  function testGameFactoryRoundsInvocation(config, expectedLimit) {
+    var gameObj;
+
+    assert.doesNotThrow(function() {
+      gameObj = game({
+        rounds: config
+      });
+    });
+
+    if (Math.abs(config) === Infinity) {
+      testInfiniteGameRoundsProperty(gameObj);
+    }
+    else {
+      testGameRoundsProperty(gameObj, expectedLimit);
+    }
+  }
+
+  function testGameRoundsProperty(gameObj, expectedLimit) {
+    var limit, target;
+
+    expectedLimit = expectedLimit || 3;
+
+    limit = gameObj.rounds.limit;
+    assert.equal(limit, expectedLimit);
+
+    target = Math.ceil(limit / 2);
+    assert.equal(gameObj.rounds.target, target);
+  }
+
+  function testInfiniteGameRoundsProperty(gameObj) {
+    var limit, target;
+
+    limit = target = -1;
+    assert.equal(gameObj.rounds.limit, limit);
+    assert.equal(gameObj.rounds.target, target);
   }
 }());

@@ -2,7 +2,7 @@
 /// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 (function() {
   'use strict';
-  if (typeof Object.assign != 'function') {
+  if (typeof Object.assign !== 'function') {
     (function() {
       Object.assign = function(target) {
         'use strict';

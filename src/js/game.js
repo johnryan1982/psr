@@ -16,13 +16,12 @@
   game = function game(opts) {
     var mode,
       maxRounds,
-      roundsForWin,
+      roundsForMajority,
       roundsPlayed;
 
     opts = opts || {};
 
-    mode = typeof opts !== 'undefined' && opts.hasOwnProperty('mode') &&
-      const_modes.indexOf(opts.mode) > -1 ? opts.mode : const_modes[0];
+    mode = const_modes.indexOf(opts.mode) > -1 ? opts.mode : const_modes[0];
 
     /// maximum number of rounds to play, as specified at invocation. note that to have a 'winner',
     /// logic dictates that we need to play an odd number fo rounds, so increment if the specified
@@ -32,16 +31,14 @@
     maxRounds = (function() {
       var rounds;
 
-      if (!opts || !opts.hasOwnProperty('rounds') || typeof opts.rounds !== 'number' ||
-        Number.isNaN(Number(opts.rounds))) {
-        console.log(opts.rounds);
-        return 3;
+      if (typeof opts !== 'object' || !opts.hasOwnProperty('rounds') ||
+        typeof opts.rounds !== 'number' || Number.isNaN(Number(opts.rounds))) {
+        rounds = 3;
       }
-
-      rounds = Math.ceil(Math.abs(opts.rounds));
-      rounds = rounds % 2 === 0 ? rounds + 1 : rounds;
-
-      // console.debug(opts.rounds, rounds);
+      else {
+        rounds = Math.ceil(Math.abs(opts.rounds));
+        rounds = rounds % 2 === 0 ? rounds + 1 : rounds;
+      }
 
       return rounds;
     }());
@@ -51,7 +48,7 @@
     /// rounds in the current game.
     /// special case of -1 covers opts.rounds === Infinity whereby the 'winner' is deemed the
     /// player with the highest number of wins when either player eventually gets bored
-    roundsForWin = Math.ceil(maxRounds / 2);
+    roundsForMajority = Math.ceil(maxRounds / 2);
 
     /// keep a tally of number of rounds played within current game for statistical purposes
     roundsPlayed = 0;
@@ -64,7 +61,7 @@
       get rounds() {
         return Object.freeze({
           limit: maxRounds.toString() === 'Infinity' ? -1 : maxRounds,
-          target: roundsForWin.toString() === 'Infinity' ? -1 : roundsForWin,
+          target: roundsForMajority.toString() === 'Infinity' ? -1 : roundsForMajority,
           played: roundsPlayed
         });
       }

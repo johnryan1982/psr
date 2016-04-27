@@ -10,41 +10,42 @@
     ///   [IE] Object doesn't support this action
     ///   [Chrome] object is not extensible
     ///   [Mobile Safari] readonly
-    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible|Cannot set property (?:.*) which has only a getter|Cannot create property for a non-extensible object)(?:.*)/,
+    immutableTypeErrorRegExp = /(?:.*)(read([- ]?)only|Object doesn\'t support this action|object is not extensible|Cannot set property (?:.*) which has only a getter|Cannot create property for a non-extensible object|Cannot delete property)(?:.*)/,
 
     /// custom TypeError thrown when a function is expecting to receive an [optionally decorated] object
-    objectExpectedError = /check params: expecting (?:.*), received (?:.*)/;
+    objectExpectedError = /check params: expecting (?:.*), received (?:.*)/,
 
-  function shouldNotThrow(testcase, apiFn, libname) {
-    var errMsg = 'expecting "' + [libname, apiFn.name].join('.') + '(' + JSON.stringify(testcase) +
-      ')" not to fail';
+    /// datatypes contains a list of possible data types once could expect, and therefore test against
+    datatypes = Object.freeze([
+      undefined,
+      null,
+      true,   /// test for both as evaluating a truthy/falsy value (eg. Number(true)) might
+      false,  /// otherwise slip through the net
+      3,
+      'string',
+      function() { return true; },
+      {},     /// catch all
+      []      /// not strictly necessary as not a true data type, arrays are commonly used
+    ]);
 
-    assert.doesNotThrow(function() {
-      apiFn(testcase);
-    }, Error, errMsg);
-  }
-
-  function incorrectFactoryInvocation(config, factoryFn, libname) {
-    var errMsg = 'attempting to create a ' + [libname, factoryFn.name].join('.') +
-    ' with incorrect parameters (' + JSON.stringify(config) + ')';
-    assert.throws(
+  function throwTypeError(cb, errMsg) {
+    errMsg = errMsg || 'property should be immutable';
+    assert.throw(
       function() {
-        factoryFn(config);
+        cb();
       },
-      Error,
-      objectExpectedError,
+      TypeError,
+      immutableTypeErrorRegExp,
       errMsg
     );
   }
 
   api = Object.freeze({
-    /// error messages
     immutableTypeErrorRegExp: immutableTypeErrorRegExp,
     objectExpectedError: objectExpectedError,
+    datatypes: datatypes,
 
-    /// functions
-    incorrectFactoryInvocation: incorrectFactoryInvocation,
-    shouldNotThrow: shouldNotThrow
+    throwTypeError: throwTypeError
   });
 
   module.exports = api;

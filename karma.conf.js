@@ -85,6 +85,14 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    concurrency: Infinity,
+
+
+    client: {
+      mocha: {
+        reporter: 'html', // change Karma's debug.html to the mocha web reporter
+        ui: 'tdd'
+      }
+    }
   });
 };

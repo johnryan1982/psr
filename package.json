@@ -38,7 +38,10 @@
     "srcdir_styles": "src/styles",
     "testdir": "test",
     "testdir_utils": "test/utils",
-    "testdir_vendor": "test/vendor"
+    "testdir_vendor": "test/vendor",
+
+    "mocha_reporter": "spec",
+    "mocha_cli_config": "--reporter spec --ui tdd --check-leaks"
   },
   "scripts": {
     "install": "npm run githooks -s",
@@ -68,7 +71,8 @@
     "complete:subtask": "printf '.\n'",
 
     "precoverage:js": "printf '=> generating coverage report: \n'",
-    "coverage:js": "istanbul cover _mocha -x $npm_package_config_testdir_vendor/**/*.js -x $npm_package_config_testdir_utils/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- -R spec",
+    "_coverage:js": "istanbul cover _mocha -x $npm_package_config_testdir_vendor/**/*.js -x $npm_package_config_testdir_utils/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- -R $npm_package_config_mocha_reporter",
+    "coverage:js": "istanbul cover _mocha -x $npm_package_config_testdir_vendor/**/*.js -x $npm_package_config_testdir_utils/**/*.js -x $npm_package_config_srcdir_polyfills/**/*.js  -- $npm_package_config_mocha_cli_config",
 
     "prelint:js": "printf '=> linting js: '",
     "lint:js": "jshint $npm_package_config_srcdir_js $npm_package_config_testdir",

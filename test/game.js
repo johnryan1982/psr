@@ -1,4 +1,4 @@
-/*globals describe:false,it:false*/
+/*globals suite:false,test:false,setup:false,teardown:false*/
 (function() {
   'use strict';
 
@@ -9,196 +9,343 @@
     gamelib = require('../src/js/game.js'),
 
     /// lib APIs
-    game = gamelib.game;
+    game = gamelib.game,
 
-  describe('gamelib', function() {
-    describe('#gamelib API', function() {
-      /// static, immutable properties
-      it('has a static "game" factory function', function() {
-        assert.throws(
-          function() {
-            gamelib.game = false;
-          },
-          TypeError,
-          utils.immutableTypeErrorRegExp,
-          'attempting to modify "gamelib.game" should throw an error'
-        );
-      });
+    /// namespaced var to contain any tmp values created within setup (each
+    /// of which can then be destroyed using delete within teardown)
+    ns = {},
 
-      it('has a static, immutable "modes" property', function() {
-        var expected = ['cc', 'pc'];
-        assert.deepEqual(gamelib.modes, expected,
-          'expecting "gamelib.modes" to be ' + JSON.stringify(expected));
+    /// other
+    gameModes = Object.freeze(['cc', 'pc']),
+    gamePlayers = Object.freeze(['Prof. Plum', 'Col. Mustard']),
+    gameRounds = Object.freeze({
+      limit: 3,
+      target: 2,
+      played: 0
+    }),
+    gameWeapons = Object.freeze({
+      'paper': Object.freeze({
+        name: 'paper',
+        defeats: Object.freeze({
+          rock: 'covers'
+        })
+      }),
+      'scissors': Object.freeze({
+        name: 'scissors',
+        defeats: Object.freeze({
+          paper: 'cut'
+        })
+      }),
+      'rock': Object.freeze({
+        name: 'rock',
+        defeats: Object.freeze({
+          scissors: 'crushes'
+        })
+      })
+    });
 
-        assert.throws(
-          function() {
-            gamelib.modes.push('a');
-          },
-          TypeError,
-          utils.immutableTypeErrorRegExp,
-          'attempting to modify "modes" should throw an error'
-        );
+  suite('gamelib', function() {
+    suite('$.modes list', function() {
+      test('is an immutable list', function() {
+        var mutators, mutatorsLen, i;
+
+        mutators = [
+          function() { gamelib.modes.push(3); },
+          function() { gamelib.modes.pop(); },
+          function() { gamelib.modes[0] = 4; },
+          function() { gamelib.modes = []; }
+        ];
+        mutatorsLen = mutators.length;
+
+        assert.deepEqual(gamelib.modes, gameModes);
+        for (i = 0; i < mutatorsLen; i += 1) {
+          utils.throwTypeError(mutators[i]);
+        }
+        assert.deepEqual(gamelib.modes, gameModes);
       });
     });
 
-    describe('#factory method object construction', function() {
-      it('handles empty/incorrect input "opts"', function() {
-        var opts, optsLen, i, numericOpts, numericOptsLen, j;
+    suite('$.game factory function', function() {
+      suite('$.game(...)', function() {
+        teardown('destroy gameObj', destroyGameObject);
 
-        opts = [
-          undefined, null, {}, [], 'string', 3, Number.NaN, true, false, function() { return true; }
-        ];
-        optsLen = opts.length;
+        test('ignores all illegal values/configurations and returns an immutable object', function() {
+          var datatypesLen, i;
 
-        for (i = 0; i < optsLen; i += 1) {
-          testGameFactoryInvocation(opts[i]);
+          datatypesLen = utils.datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(utils.datatypes[i]);
+          }
+        });
+
+        function configure(config) {
+          ns.gameObj = game(config);
+
+          assert.isObject(ns.gameObj);
+          assert.isFrozen(ns.gameObj);
         }
-
-        testGameFactoryRoundsInvocation(-1, 1);
-        testGameFactoryRoundsInvocation(0, 1);
-        testGameFactoryRoundsInvocation(1, 1);
-
-        testGameFactoryRoundsInvocation(-6.458, 7);
-        testGameFactoryRoundsInvocation(6.458, 7);
-
-        testGameFactoryRoundsInvocation(1e1, 11);
-        testGameFactoryRoundsInvocation(-1e1, 11);
-
-        testGameFactoryRoundsInvocation(Infinity, -1);
-        testGameFactoryRoundsInvocation(-Infinity, -1);
       });
 
-      it('returns a (gameObj) object with an immutable "mode" property', function() {
-        var gameUndefinedMode, gameComputerVsComputer, gamePlayerVsComputer, gameUnknownConfig;
+      suite('$.game({mode:...})', function() {
+        teardown('destroy gameObj', destroyGameObject);
 
-        gameUndefinedMode = game();
-        assert.property(gameUndefinedMode, 'mode');
+        test('ignores all illegal values/configurations', function() {
+          var datatypesLen, i;
 
-        gameComputerVsComputer = game({
-          mode: 'cc'
+          datatypesLen = utils.datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(utils.datatypes[i]);
+          }
         });
-        assert.equal(gameComputerVsComputer.mode, 'cc', 'expecting "game.mode" value to default to "modeCC"; ' +
-          ' received "' + gameComputerVsComputer.mode + '"');
 
-        gamePlayerVsComputer = game({
-          mode: 'pc'
+        test('covers legal (finite) $.modes values', function() {
+          var gameModesLen, i;
+
+          gameModesLen = gameModes.length;
+
+          for (i = 0; i < gameModesLen; i += 1) {
+            configure(gameModes[i], gameModes[i]);
+          }
         });
-        assert.equal(gamePlayerVsComputer.mode, 'pc', 'expecting "game.mode" value to be "modePC"; ' +
-          ' received "' + gamePlayerVsComputer.mode + '"');
 
-        gameUnknownConfig = game({
-          mode: 'X'
+        function configure(config, expected) {
+          expected = expected || gameModes[0];
+
+          ns.gameObj = game({
+            mode: config
+          });
+
+          assert.equal(ns.gameObj.mode, expected);
+        }
+      });
+
+      suite('$.game({rounds:...})', function() {
+        teardown('destroy gameObj', destroyGameObject);
+
+        test('ignores all illegal values/configurations', function() {
+          var datatypes, datatypesLen, i;
+
+          /// numbers are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeNumeric(val) {
+            return typeof val !== 'number';
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
         });
-        assert.equal(gameUnknownConfig.mode, 'cc', 'expecting "game.mode" value to be "modeCC"; ' +
-          ' received "' + gameUnknownConfig.mode + '"');
 
-        assert.throws(
-          function() {
-            gameComputerVsComputer.mode = 'a';
-          },
-          TypeError,
-          utils.immutableTypeErrorRegExp,
-          'attempting to modify "mode" should throw an error'
-        );
+        test('covers legal $.rounds values', function() {
+          var configs, configsLen, i, subConfig, subConfigLen, j;
+
+          configs = [
+            {
+              vals: [-1, 0, 1],
+              expected: {
+                limit: 1,
+                target: 1,
+                played: 0
+              }
+            },
+            {
+              vals: [-2, 2, -3, 3],
+              expected: {
+                limit: 3,
+                target: 2,
+                played: 0
+              }
+            },
+            {
+              vals: [-4, 4],
+              expected: {
+                limit: 5,
+                target: 3,
+                played: 0
+              }
+            },
+            {
+              vals: [-5.0000001, 5.0000001, -6.4578, 6.4578],
+              expected: {
+                limit: 7,
+                target: 4,
+                played: 0
+              }
+            },
+            {
+              vals: [-Infinity, Infinity],
+              expected: {
+                limit: -1,
+                target: -1,
+                played: 0
+              }
+            }
+          ];
+          configsLen = configs.length;
+
+          for (i = 0; i < configsLen; i += 1) {
+            subConfig = configs[i];
+            subConfigLen = subConfig.vals.length;
+            for (j = 0; j < subConfigLen; j += 1) {
+              configure(subConfig.vals[j], subConfig.expected);
+            }
+          }
+        });
+
+        function configure(config, expected) {
+          expected = expected || gameRounds;
+
+          ns.gameObj = game({
+            rounds: config
+          });
+
+          assert.deepEqual(ns.gameObj.rounds, expected);
+        }
       });
 
-      it('returns a (gameObj) object with an immutable "players" list', function() {
-        var gameObj = game();
-        assert.deepEqual(gameObj.players, ['a', 'b']);
+      suite('$.game({players:...})', function() {
+        teardown('destroy gameObj', destroyGameObject);
 
-        assert.throws(
-          function() {
-            gameObj.players.push('c');
-          },
-          TypeError,
-          utils.immutableTypeErrorRegExp,
-          'attempting to modify "players" should throw an error'
-        );
+        test('ignores all illegal values/configurations', function() {
+          var datatypes, datatypesLen, i;
+
+          /// strings are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeString(val) {
+            return typeof val !== 'string';
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
+        });
+
+        test('covers legal $.players configuration', function() {
+          var player = 'Rev. Green';
+
+          configure(player, [player, gamePlayers[1]]);
+        });
+
+        function configure(config, expected) {
+          expected = expected || gamePlayers;
+
+          ns.gameObj = game({
+            player: config
+          });
+
+          assert.deepEqual(ns.gameObj.players, expected);
+        }
       });
 
-      /// * have the following properties:
-      ///   * <Map> rounds
-      ///     * <int> limit
-      ///     * <int> target
-      ///     * <int> played
-      /// * have the following methods:
-      ///   * reset // reset game => reset player stats
-      it('returns a (gameObj) object with an immutable "rounds" object', function() {
-        var gameObj, defaultRoundsObject;
+      suite('$.game({weapons:...})', function() {
+        teardown('destroy gameObj', destroyGameObject);
 
-        gameObj = game();
-        assert.throws(
-          function() {
-            gameObj.rounds.played = 5;
-          },
-          TypeError,
-          utils.immutableTypeErrorRegExp,
-          'attempting to modify "rounds" should throw an error'
-        );
+        test('ignores all illegal values/configurations', function() {
+          var datatypes, datatypesLen, i;
 
-        defaultRoundsObject = {
-          limit: 3,
-          target: 2,
-          played: 0
-        };
-        assert.deepEqual(gameObj.rounds, defaultRoundsObject, 'expecting "rounds" to be "' +
-          JSON.stringify(defaultRoundsObject) + '"');
+          /// objects are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeString(val) {
+            return typeof val !== 'string' || (val === null || val instanceof Array);
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
+        });
+
+        test('covers legal $.weapons configuration');
+
+        test('is an immutable object', function() {
+          var mutators, mutatorsLen, i;
+
+          mutators = [
+            function() { delete ns.gameObj.weapons; },
+            function() { ns.gameObj.weapons = {}; },
+            function() { delete ns.gameObj.weapons.paper; },
+            function() { ns.gameObj.weapons.paper = {}; },
+            function() { ns.gameObj.weapons.asparagus = {}; }
+          ];
+          mutatorsLen = mutators.length;
+
+          ns.gameObj = game();
+
+          assert.deepEqual(ns.gameObj.weapons, gameWeapons);
+          for (i = 0; i < mutatorsLen; i += 1) {
+            utils.throwTypeError(mutators[i]);
+          }
+          assert.deepEqual(ns.gameObj.weapons, gameWeapons);
+        });
+
+        function configure(config, expected) {
+          expected = expected || gameWeapons;
+
+          ns.gameObj = game({
+            weapons: config
+          });
+
+          assert.deepEqual(ns.gameObj.weapons, expected);
+        }
       });
 
-      it('"reset" method resets the "rounds" property, plus each "player.score" property');
+      suite('$.game().fight()', function() {
+        teardown('destroy gameObj', destroyGameObject);
+
+        test('compares 2 weapons and returns the result (-1, 0, or 1)', function() {
+          ns.gameObj = game();
+
+          assert.oneOf(ns.gameObj.fight('paper', 'scissors'), [-1, 0, 1], 'expecting one of [-1, 0, 1]');
+        });
+
+        test('correctly updates $.game().rounds.played', function() {
+          ns.gameObj = game();
+
+          ns.gameObj.fight('paper', 'scissors'); /// a < b => -1
+          assert.equal(ns.gameObj.rounds.played, 1);
+
+          ns.gameObj.fight('paper', 'paper'); /// a === b => 0
+          assert.equal(ns.gameObj.rounds.played, 1);
+
+          ns.gameObj.fight('scissors', 'paper'); /// a > b => 1
+          assert.equal(ns.gameObj.rounds.played, 2);
+
+          assert.throws(
+            function() {
+              ns.gameObj.fight('apple', 'paper');
+            },
+            'check params: "apple" is not a member of "weapons"',
+            'incorrect "a" parameter passed to $.game.fight()'
+          );
+          assert.throws(
+            function() {
+              ns.gameObj.fight('paper', 'pear');
+            },
+            'check params: "pear" is not a member of "weapons"',
+            'incorrect "b" parameter passed to $.game.fight()'
+          );
+          assert.equal(ns.gameObj.rounds.played, 2);
+        });
+      });
+
+      suite('$.game().reset()', function() {
+        teardown('destroy gameObj', destroyGameObject);
+
+        test('resets the current game using existing configuration', function() {
+          ns.gameObj = game();
+
+          ns.gameObj.fight('paper', 'scissors');
+          assert.equal(ns.gameObj.rounds.played, 1);
+          ns.gameObj.reset();
+          assert.equal(ns.gameObj.rounds.played, 0);
+        });
+      });
     });
   });
 
-  function testGameFactoryInvocation(config) {
-    var gameObj;
-
-    assert.doesNotThrow(function() {
-      gameObj = game(config);
-    });
-    testGameRoundsProperty(gameObj);
-
-    assert.doesNotThrow(function() {
-      gameObj = game({
-        rounds: config
-      });
-    });
-    testGameRoundsProperty(gameObj);
+  function destroyGameObject() {
+    delete ns.gameObj;
   }
 
-  function testGameFactoryRoundsInvocation(config, expectedLimit) {
-    var gameObj;
-
-    assert.doesNotThrow(function() {
-      gameObj = game({
-        rounds: config
-      });
-    });
-
-    if (Math.abs(config) === Infinity) {
-      testInfiniteGameRoundsProperty(gameObj);
-    }
-    else {
-      testGameRoundsProperty(gameObj, expectedLimit);
-    }
-  }
-
-  function testGameRoundsProperty(gameObj, expectedLimit) {
-    var limit, target;
-
-    expectedLimit = expectedLimit || 3;
-
-    limit = gameObj.rounds.limit;
-    assert.equal(limit, expectedLimit);
-
-    target = Math.ceil(limit / 2);
-    assert.equal(gameObj.rounds.target, target);
-  }
-
-  function testInfiniteGameRoundsProperty(gameObj) {
-    var limit, target;
-
-    limit = target = -1;
-    assert.equal(gameObj.rounds.limit, limit);
-    assert.equal(gameObj.rounds.target, target);
-  }
 }());

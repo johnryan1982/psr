@@ -7,9 +7,11 @@
 
     /// libs
     gamelib = require('../src/js/game.js'),
+    weaponlib = require('../src/js/weapon.js'),
 
     /// lib APIs
     game = gamelib.game,
+    weapon = weaponlib.weapon,
 
     /// namespaced var to contain any tmp values created within setup (each
     /// of which can then be destroyed using delete within teardown)

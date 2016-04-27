@@ -61,7 +61,7 @@
 
         assert.deepEqual(gamelib.modes, gameModes);
         for (i = 0; i < mutatorsLen; i += 1) {
-          utils.throwTypeError(mutators[i]);
+          utils.throwImmutableTypeError(mutators[i]);
         }
         assert.deepEqual(gamelib.modes, gameModes);
       });
@@ -276,7 +276,7 @@
 
           assert.deepEqual(ns.gameObj.weapons, gameWeapons);
           for (i = 0; i < mutatorsLen; i += 1) {
-            utils.throwTypeError(mutators[i]);
+            utils.throwImmutableTypeError(mutators[i]);
           }
           assert.deepEqual(ns.gameObj.weapons, gameWeapons);
         });

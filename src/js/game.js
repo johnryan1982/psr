@@ -91,19 +91,19 @@
     /// game `weapons` are registered on initialisation and are immutable. weapon modifications are
     /// therefore not permitted during a game
     weapons = Object.freeze({
-      'paper': Object.freeze({
+      paper: Object.freeze({
         name: 'paper',
         defeats: Object.freeze({
           rock: 'covers'
         })
       }),
-      'scissors': Object.freeze({
+      scissors: Object.freeze({
         name: 'scissors',
         defeats: Object.freeze({
           paper: 'cut'
         })
       }),
-      'rock': Object.freeze({
+      rock: Object.freeze({
         name: 'rock',
         defeats: Object.freeze({
           scissors: 'crushes'

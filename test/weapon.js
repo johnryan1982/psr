@@ -73,6 +73,46 @@
           assert.equal(ns.weaponObj.name, expected);
         }
       });
+
+      suite('$.weapon({defeats:...})', function() {
+        teardown('destroy weaponObj', destroyWeaponObject);
+
+        test('ignores all illegal values/configurations and returns an immutable object', function() {
+          var datatypes, datatypesLen, i;
+
+          /// objects are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeString(val) {
+            return typeof val !== 'object' || (val === null || val instanceof Array);
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
+        });
+
+        test('covers legal $.defeats configurations', function() {
+          var defeats = {
+            fire: 'extinguishes'
+          };
+
+          configure(defeats, defeats);
+        });
+
+        function configure(config, expected) {
+          expected = expected || {
+            otherWeaponName: 'destroys'
+          };
+
+          ns.weaponObj = weapon({
+            defeats: config
+          });
+
+          assert.isObject(ns.weaponObj);
+          assert.isFrozen(ns.weaponObj);
+          assert.deepEqual(ns.weaponObj.defeats, expected);
+        }
+      });
     });
   });
 

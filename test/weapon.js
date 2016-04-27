@@ -37,6 +37,42 @@
           assert.isFrozen(ns.weaponObj);
         }
       });
+
+      suite('$.weapon({name:...})', function() {
+        teardown('destroy weaponObj', destroyWeaponObject);
+
+        test('ignores all illegal values/configurations and returns an immutable object', function() {
+          var datatypes, datatypesLen, i;
+
+          /// strings are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeString(val) {
+            return typeof val !== 'string';
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
+        });
+
+        test('covers legal $.name configurations', function() {
+          var name = 'paper';
+
+          configure(name, name);
+        });
+
+        function configure(config, expected) {
+          expected = expected || 'not specified';
+
+          ns.weaponObj = weapon({
+            name: config
+          });
+
+          assert.isObject(ns.weaponObj);
+          assert.isFrozen(ns.weaponObj);
+          assert.equal(ns.weaponObj.name, expected);
+        }
+      });
     });
   });
 

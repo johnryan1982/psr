@@ -4,7 +4,7 @@
   'use strict';
   if (typeof Number.isNaN !== 'function') {
     (function() {
-      Number.isNaN = Number.isNaN || function(value) {
+      Number.isNaN = Number.isNaN || function isNaN(value) {
         return value !== value;
       };
     }());

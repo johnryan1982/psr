@@ -28,7 +28,7 @@
       []      /// not strictly necessary as not a true data type, arrays are commonly used
     ]);
 
-  function throwTypeError(cb, errMsg) {
+  function throwImmutableTypeError(cb, errMsg) {
     errMsg = errMsg || 'property should be immutable';
     assert.throw(
       function() {
@@ -45,7 +45,7 @@
     objectExpectedError: objectExpectedError,
     datatypes: datatypes,
 
-    throwTypeError: throwTypeError
+    throwImmutableTypeError: throwImmutableTypeError
   });
 
   module.exports = api;

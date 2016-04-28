@@ -9,9 +9,25 @@
     player;
 
   player = function player(opts) {
+    var name;
+
     opts = opts || {};
 
-    return Object.freeze({});
+    name = (function name() {
+      if (typeof opts === 'object' && opts.hasOwnProperty('name') &&
+        typeof opts.name === 'string') {
+        return opts.name;
+      }
+      else {
+        return 'Anon';
+      }
+    }());
+
+    return Object.freeze({
+      get name() {
+        return name;
+      }
+    });
   };
 
   api = Object.freeze({

@@ -16,25 +16,61 @@
     ns = {};
 
   suite('playerlib', function() {
-    suite('$.player(...)', function() {
-      teardown('destroy playerObj', destroyPlayerObject);
+    suite('$.player factory function', function() {
+      suite('$.player(...)', function() {
+        teardown('destroy playerObj', destroyPlayerObject);
 
-      test('ignores all invalid values/configurations and returns an immutable object', function() {
-        var datatypesLen, i;
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
+          var datatypesLen, i;
 
-        datatypesLen = utils.datatypes.length;
+          datatypesLen = utils.datatypes.length;
 
-        for (i = 0; i < datatypesLen; i += 1) {
-          configure(utils.datatypes[i]);
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(utils.datatypes[i]);
+          }
+        });
+
+        function configure(config) {
+          ns.playerObj = player(config);
+
+          assert.isObject(ns.playerObj);
+          assert.isFrozen(ns.playerObj);
         }
       });
 
-      function configure(config) {
-        ns.playerObj = player(config);
+      suite('$.player({name:...})', function() {
+        teardown('destroy playerObj', destroyPlayerObject);
 
-        assert.isObject(ns.playerObj);
-        assert.isFrozen(ns.playerObj);
-      }
+        test('ignores all invalid values/configurations', function() {
+          var datatypes, datatypesLen, i;
+
+          /// strings are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeString(val) {
+            return typeof val !== 'string';
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            configure(datatypes[i]);
+          }
+        });
+
+        test('covers valid $.name configuration', function() {
+          var player = 'Rev. Green';
+
+          configure(player, player);
+        });
+
+        function configure(config, expected) {
+          expected = expected || 'Anon';
+
+          ns.playerObj = player({
+            name: config
+          });
+
+          assert.equal(ns.playerObj.name, expected);
+        }
+      });
     });
   });
 

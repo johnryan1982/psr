@@ -10,7 +10,7 @@
 
     opts = opts || {};
 
-    name = (function() {
+    name = (function name() {
       if (typeof opts === 'object' && opts.hasOwnProperty('name') &&
         typeof opts.name === 'string') {
         return opts.name;
@@ -20,7 +20,7 @@
       }
     }());
 
-    defeats = (function() {
+    defeats = (function defeats() {
       if (typeof opts === 'object' && opts.hasOwnProperty('defeats') &&
         (typeof opts.defeats === 'object' && opts.defeats !== null &&
         !(opts.defeats instanceof Array))) {

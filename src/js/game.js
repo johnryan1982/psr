@@ -100,7 +100,7 @@
     /*** weapons ***/
     /// game `weapons` are registered on initialisation and are immutable. weapon modifications are
     /// therefore not permitted during a game
-    weapons = (function() {
+    weapons = (function weapons() {
       if (typeof opts === 'object' && opts.hasOwnProperty('weapons') &&
         (typeof opts.weapons === 'object' && opts.weapons !== null &&
         !(opts.weapons instanceof Array))) {
@@ -120,23 +120,6 @@
         return {};
       }
     }());
-    // Object.freeze({
-    //   paper: paper({
-    //     defeats: {
-    //       rock: 'covers'
-    //     }
-    //   }),
-    //   scissors: scissors({
-    //     defeats: {
-    //       paper: 'cut'
-    //     }
-    //   }),
-    //   rock: rock({
-    //     defeats: {
-    //       scissors: 'crushes'
-    //     }
-    //   })
-    // });
 
     /// compare weapons `a` and `b` according to their `defeats` property
     fnFight = function fight(a, b) {

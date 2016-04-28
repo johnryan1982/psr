@@ -20,7 +20,7 @@
       suite('$.weapon(...)', function() {
         teardown('destroy weaponObj', destroyWeaponObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypesLen, i;
 
           datatypesLen = utils.datatypes.length;
@@ -41,7 +41,7 @@
       suite('$.weapon({name:...})', function() {
         teardown('destroy weaponObj', destroyWeaponObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypes, datatypesLen, i;
 
           /// strings are valid input and are tested elsewhere
@@ -55,7 +55,7 @@
           }
         });
 
-        test('covers legal $.name configurations', function() {
+        test('covers valid $.name configurations', function() {
           var name = 'paper';
 
           configure(name, name);
@@ -77,7 +77,7 @@
       suite('$.weapon({defeats:...})', function() {
         teardown('destroy weaponObj', destroyWeaponObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypes, datatypesLen, i;
 
           /// objects are valid input and are tested elsewhere
@@ -91,7 +91,7 @@
           }
         });
 
-        test('covers legal $.defeats configurations', function() {
+        test('covers valid $.defeats configurations', function() {
           var defeats = {
             fire: 'extinguishes'
           };

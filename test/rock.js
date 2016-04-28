@@ -20,7 +20,7 @@
       suite('$.rock(...)', function() {
         teardown('destroy rockObj', destroyRockObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypesLen, i;
 
           datatypesLen = utils.datatypes.length;
@@ -57,7 +57,7 @@
       suite('$.rock({defeats:...})', function() {
         teardown('destroy rockObj', destroyRockObject);
 
-        test('returns an immutable object"', function() {
+        test('returns an immutable object', function() {
           var config = {
             scissors: 'smashes'
           };

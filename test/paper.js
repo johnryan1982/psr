@@ -20,7 +20,7 @@
       suite('$.paper(...)', function() {
         teardown('destroy paperObj', destroyPaperObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypesLen, i;
 
           datatypesLen = utils.datatypes.length;
@@ -57,7 +57,7 @@
       suite('$.paper({defeats:...})', function() {
         teardown('destroy paperObj', destroyPaperObject);
 
-        test('returns an immutable object"', function() {
+        test('returns an immutable object', function() {
           var config = {
             rock: 'covers'
           };

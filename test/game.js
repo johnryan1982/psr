@@ -433,6 +433,23 @@
           });
         });
       });
+
+      suite('$.game().isComplete', function() {
+        teardown('destroy gameObj', destroyGameObject);
+
+        test('query $.game() to find out if the current game is complete', function() {
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
+
+          assert.isFalse(ns.gameObj.isComplete);
+
+          ns.gameObj.fight(weaponPaper.name, weaponScissors.name);
+          ns.gameObj.fight(weaponPaper.name, weaponScissors.name);
+
+          assert.isTrue(ns.gameObj.isComplete);
+        });
+      });
     });
   });
 

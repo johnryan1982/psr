@@ -168,6 +168,15 @@
 
     return Object.freeze({
       /// getters
+      get isComplete() {
+        var scores = [
+          players[0].stats.wins,
+          players[1].stats.wins
+        ];
+
+        return Math.max.apply(null, scores) === roundsForMajority;
+      },
+
       get mode() {
         return mode;
       },

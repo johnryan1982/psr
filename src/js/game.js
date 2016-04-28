@@ -2,6 +2,16 @@
   'use strict';
 
   var
+    /// libs
+    paperlib = require('./paper.js'),
+    scissorslib = require('./scissors.js'),
+    rocklib = require('./rock.js'),
+
+    /// lib APIs
+    paper = paperlib.paper,
+    scissors = scissorslib.scissors,
+    rock = rocklib.rock,
+
     /// immutable
     const_modes = Object.freeze(['cc', 'pc']),
 
@@ -90,26 +100,43 @@
     /*** weapons ***/
     /// game `weapons` are registered on initialisation and are immutable. weapon modifications are
     /// therefore not permitted during a game
-    weapons = Object.freeze({
-      paper: Object.freeze({
-        name: 'paper',
-        defeats: Object.freeze({
-          rock: 'covers'
-        })
-      }),
-      scissors: Object.freeze({
-        name: 'scissors',
-        defeats: Object.freeze({
-          paper: 'cut'
-        })
-      }),
-      rock: Object.freeze({
-        name: 'rock',
-        defeats: Object.freeze({
-          scissors: 'crushes'
-        })
-      })
-    });
+    weapons = (function() {
+      if (typeof opts === 'object' && opts.hasOwnProperty('weapons') &&
+        (typeof opts.weapons === 'object' && opts.weapons !== null &&
+        !(opts.weapons instanceof Array))) {
+        var keys = Object.keys(opts.weapons);
+
+        if (keys.length < 3) {
+          throw new Error('expecting "opts.weapons" to have at least 3 elements, but received ' + keys.length);
+        }
+        else if (keys.length % 2 === 0) {
+          throw new Error('expecting "opts.weapons" to have an odd number of elements, but received ' + keys.length);
+        }
+        else {
+          return opts.weapons;
+        }
+      }
+      else {
+        return {};
+      }
+    }());
+    // Object.freeze({
+    //   paper: paper({
+    //     defeats: {
+    //       rock: 'covers'
+    //     }
+    //   }),
+    //   scissors: scissors({
+    //     defeats: {
+    //       paper: 'cut'
+    //     }
+    //   }),
+    //   rock: rock({
+    //     defeats: {
+    //       scissors: 'crushes'
+    //     }
+    //   })
+    // });
 
     /// compare weapons `a` and `b` according to their `defeats` property
     fnFight = function fight(a, b) {
@@ -170,7 +197,7 @@
       },
 
       get weapons() {
-        return weapons;
+        return Object.freeze(weapons);
       },
 
       /// methods

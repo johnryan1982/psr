@@ -7,10 +7,16 @@
 
     /// libs
     gamelib = require('../src/js/game.js'),
+    paperlib = require('../src/js/paper.js'),
+    scissorslib = require('../src/js/scissors.js'),
+    rocklib = require('../src/js/rock.js'),
     weaponlib = require('../src/js/weapon.js'),
 
     /// lib APIs
     game = gamelib.game,
+    paper = paperlib.paper,
+    scissors = scissorslib.scissors,
+    rock = rocklib.rock,
     weapon = weaponlib.weapon,
 
     /// namespaced var to contain any tmp values created within setup (each
@@ -18,6 +24,8 @@
     ns = {},
 
     /// other
+    defaultGameWeapons = {},
+
     gameModes = Object.freeze(['cc', 'pc']),
     gamePlayers = Object.freeze(['Prof. Plum', 'Col. Mustard']),
     gameRounds = Object.freeze({
@@ -25,26 +33,28 @@
       target: 2,
       played: 0
     }),
-    gameWeapons = Object.freeze({
-      'paper': Object.freeze({
-        name: 'paper',
-        defeats: Object.freeze({
-          rock: 'covers'
-        })
-      }),
-      'scissors': Object.freeze({
-        name: 'scissors',
-        defeats: Object.freeze({
-          paper: 'cut'
-        })
-      }),
-      'rock': Object.freeze({
-        name: 'rock',
-        defeats: Object.freeze({
-          scissors: 'crushes'
-        })
-      })
-    });
+
+    weaponPaper = paper({
+      defeats: {
+        rock: 'covers'
+      }
+    }),
+    weaponScissors = scissors({
+      defeats: {
+        paper: 'cut'
+      }
+    }),
+    weaponRock = rock({
+      defeats: {
+        scissors: 'crushes'
+      }
+    }),
+
+    gameWeapons = {
+      paper: weaponPaper,
+      scissors: weaponScissors,
+      rock: weaponRock
+    };
 
   suite('gamelib', function() {
     suite('$.modes list', function() {
@@ -71,7 +81,7 @@
       suite('$.game(...)', function() {
         teardown('destroy gameObj', destroyGameObject);
 
-        test('ignores all illegal values/configurations and returns an immutable object', function() {
+        test('ignores all invalid values/configurations and returns an immutable object', function() {
           var datatypesLen, i;
 
           datatypesLen = utils.datatypes.length;
@@ -92,7 +102,7 @@
       suite('$.game({mode:...})', function() {
         teardown('destroy gameObj', destroyGameObject);
 
-        test('ignores all illegal values/configurations', function() {
+        test('ignores all invalid values/configurations', function() {
           var datatypesLen, i;
 
           datatypesLen = utils.datatypes.length;
@@ -102,7 +112,7 @@
           }
         });
 
-        test('covers legal (finite) $.modes values', function() {
+        test('covers valid $.modes values', function() {
           var gameModesLen, i;
 
           gameModesLen = gameModes.length;
@@ -126,7 +136,7 @@
       suite('$.game({rounds:...})', function() {
         teardown('destroy gameObj', destroyGameObject);
 
-        test('ignores all illegal values/configurations', function() {
+        test('ignores all invalid values/configurations', function() {
           var datatypes, datatypesLen, i;
 
           /// numbers are valid input and are tested elsewhere
@@ -140,7 +150,7 @@
           }
         });
 
-        test('covers legal $.rounds values', function() {
+        test('covers valid $.rounds values', function() {
           var configs, configsLen, i, subConfig, subConfigLen, j;
 
           configs = [
@@ -210,7 +220,7 @@
       suite('$.game({players:...})', function() {
         teardown('destroy gameObj', destroyGameObject);
 
-        test('ignores all illegal values/configurations', function() {
+        test('ignores all invalid values/configurations', function() {
           var datatypes, datatypesLen, i;
 
           /// strings are valid input and are tested elsewhere
@@ -224,7 +234,7 @@
           }
         });
 
-        test('covers legal $.players configuration', function() {
+        test('covers valid $.players configuration', function() {
           var player = 'Rev. Green';
 
           configure(player, [player, gamePlayers[1]]);
@@ -244,12 +254,12 @@
       suite('$.game({weapons:...})', function() {
         teardown('destroy gameObj', destroyGameObject);
 
-        test('ignores all illegal values/configurations', function() {
+        test('ignores all invalid values/configurations', function() {
           var datatypes, datatypesLen, i;
 
           /// objects are valid input and are tested elsewhere
-          datatypes = utils.datatypes.filter(function removeString(val) {
-            return typeof val !== 'string' || (val === null || val instanceof Array);
+          datatypes = utils.datatypes.filter(function removeObject(val) {
+            return typeof val !== 'object' || (val === null || val instanceof Array);
           });
           datatypesLen = datatypes.length;
 
@@ -258,7 +268,48 @@
           }
         });
 
-        test('covers legal $.weapons configuration');
+        test('ensures a minimum of 3 weapons', function() {
+          var modifiedWeapons = Object.assign({}, gameWeapons);
+          delete modifiedWeapons.rock;
+
+          assert.throws(
+            function() {
+              ns.gameObj = game({
+                weapons: modifiedWeapons
+              });
+            },
+            'expecting "opts.weapons" to have at least 3 elements',
+            'too few elements in "opts.weapons"'
+          );
+        });
+
+        test('ensures an odd number of weapons', function() {
+          var modifiedWeapons = Object.assign({}, gameWeapons);
+          modifiedWeapons.ink = weapon({
+            name: 'ink',
+            defeats: {
+              paper: 'smears'
+            }
+          });
+
+          assert.throws(
+            function() {
+              ns.gameObj = game({
+                weapons: modifiedWeapons
+              });
+            },
+            'expecting "opts.weapons" to have an odd number of elements',
+            'even number of elements in "opts.weapons"'
+          );
+        });
+
+        test('covers valid $.weapons configuration', function() {
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
+
+          assert.deepEqual(ns.gameObj.weapons, gameWeapons);
+        });
 
         test('is an immutable object', function() {
           var mutators, mutatorsLen, i;
@@ -272,7 +323,9 @@
           ];
           mutatorsLen = mutators.length;
 
-          ns.gameObj = game();
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
 
           assert.deepEqual(ns.gameObj.weapons, gameWeapons);
           for (i = 0; i < mutatorsLen; i += 1) {
@@ -282,7 +335,7 @@
         });
 
         function configure(config, expected) {
-          expected = expected || gameWeapons;
+          expected = expected || defaultGameWeapons;
 
           ns.gameObj = game({
             weapons: config
@@ -296,33 +349,38 @@
         teardown('destroy gameObj', destroyGameObject);
 
         test('compares 2 weapons and returns the result (-1, 0, or 1)', function() {
-          ns.gameObj = game();
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
 
-          assert.oneOf(ns.gameObj.fight('paper', 'scissors'), [-1, 0, 1], 'expecting one of [-1, 0, 1]');
+          assert.oneOf(ns.gameObj.fight(weaponPaper.name, weaponScissors.name), [-1, 0, 1],
+            'expecting one of [-1, 0, 1]');
         });
 
         test('correctly updates $.game().rounds.played', function() {
-          ns.gameObj = game();
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
 
-          ns.gameObj.fight('paper', 'scissors'); /// a < b => -1
+          ns.gameObj.fight(weaponPaper.name, weaponScissors.name); /// a < b => -1
           assert.equal(ns.gameObj.rounds.played, 1);
 
-          ns.gameObj.fight('paper', 'paper'); /// a === b => 0
+          ns.gameObj.fight(weaponPaper.name, weaponPaper.name); /// a === b => 0
           assert.equal(ns.gameObj.rounds.played, 1);
 
-          ns.gameObj.fight('scissors', 'paper'); /// a > b => 1
+          ns.gameObj.fight(weaponScissors.name, weaponPaper.name); /// a > b => 1
           assert.equal(ns.gameObj.rounds.played, 2);
 
           assert.throws(
             function() {
-              ns.gameObj.fight('apple', 'paper');
+              ns.gameObj.fight('apple', weaponPaper.name);
             },
             'check params: "apple" is not a member of "weapons"',
             'incorrect "a" parameter passed to $.game.fight()'
           );
           assert.throws(
             function() {
-              ns.gameObj.fight('paper', 'pear');
+              ns.gameObj.fight(weaponPaper.name, 'pear');
             },
             'check params: "pear" is not a member of "weapons"',
             'incorrect "b" parameter passed to $.game.fight()'
@@ -335,9 +393,11 @@
         teardown('destroy gameObj', destroyGameObject);
 
         test('resets the current game using existing configuration', function() {
-          ns.gameObj = game();
+          ns.gameObj = game({
+            weapons: gameWeapons
+          });
 
-          ns.gameObj.fight('paper', 'scissors');
+          ns.gameObj.fight(weaponPaper.name, weaponScissors.name);
           assert.equal(ns.gameObj.rounds.played, 1);
           ns.gameObj.reset();
           assert.equal(ns.gameObj.rounds.played, 0);

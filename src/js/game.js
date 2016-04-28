@@ -4,19 +4,20 @@
   var
     /// libs
     paperlib = require('./paper.js'),
-    scissorslib = require('./scissors.js'),
+    playerlib = require('./player.js'),
     rocklib = require('./rock.js'),
+    scissorslib = require('./scissors.js'),
 
     /// lib APIs
     paper = paperlib.paper,
-    scissors = scissorslib.scissors,
+    player = playerlib.player,
     rock = rocklib.rock,
+    scissors = scissorslib.scissors,
 
     /// immutable
     const_modes = Object.freeze(['cc', 'pc']),
 
-    api,
-    game;
+    api, game;
 
   /// usage:
   ///   var g = game({
@@ -24,15 +25,7 @@
   ///     rounds: 5               // max number of rounds to play
   ///   });
   game = function game(opts) {
-    var mode,
-      players,
-      maxRounds,
-      roundsForMajority,
-      roundsPlayed,
-      weapons,
-
-      fnFight,
-      fnReset;
+    var mode, players, maxRounds, roundsForMajority, roundsPlayed, weapons, fnFight, fnReset;
 
     opts = opts || {};
 
@@ -56,13 +49,20 @@
       var playerList = [];
 
       if (typeof opts === 'object' && opts.hasOwnProperty('player') && typeof opts.player === 'string') {
-        playerList.push(opts.player);
+        playerList.push(player({
+          name: opts.player
+        }));
       }
       else {
-        playerList.push('Prof. Plum');
+        playerList.push(player({
+          name: 'Prof. Plum'
+        }));
       }
 
-      playerList.push('Col. Mustard');
+      playerList.push(player({
+        name: 'Col. Mustard'
+      }));
+
       return Object.freeze(playerList);
     }());
 
@@ -101,10 +101,12 @@
     /// game `weapons` are registered on initialisation and are immutable. weapon modifications are
     /// therefore not permitted during a game
     weapons = (function weapons() {
+      var keys;
+
       if (typeof opts === 'object' && opts.hasOwnProperty('weapons') &&
         (typeof opts.weapons === 'object' && opts.weapons !== null &&
         !(opts.weapons instanceof Array))) {
-        var keys = Object.keys(opts.weapons);
+        keys = Object.keys(opts.weapons);
 
         if (keys.length < 3) {
           throw new Error('expecting "opts.weapons" to have at least 3 elements, but received ' + keys.length);
@@ -150,6 +152,9 @@
         result = -1;
       }
 
+      players[0].updateStats(result);
+      players[1].updateStats(0 - result);
+
       return result;
     };
 
@@ -157,8 +162,8 @@
     fnReset = function reset() {
       roundsPlayed = 0;
 
-      console.log('players[0].reset()');
-      console.log('players[1].reset()');
+      players[0].reset();
+      players[1].reset();
     };
 
     return Object.freeze({

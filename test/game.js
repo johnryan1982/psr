@@ -8,15 +8,17 @@
     /// libs
     gamelib = require('../src/js/game.js'),
     paperlib = require('../src/js/paper.js'),
-    scissorslib = require('../src/js/scissors.js'),
+    playerlib = require('../src/js/player.js'),
     rocklib = require('../src/js/rock.js'),
+    scissorslib = require('../src/js/scissors.js'),
     weaponlib = require('../src/js/weapon.js'),
 
     /// lib APIs
     game = gamelib.game,
     paper = paperlib.paper,
-    scissors = scissorslib.scissors,
+    player = playerlib.player,
     rock = rocklib.rock,
+    scissors = scissorslib.scissors,
     weapon = weaponlib.weapon,
 
     /// namespaced var to contain any tmp values created within setup (each
@@ -27,7 +29,14 @@
     defaultGameWeapons = {},
 
     gameModes = Object.freeze(['cc', 'pc']),
-    gamePlayers = Object.freeze(['Prof. Plum', 'Col. Mustard']),
+    gamePlayers = Object.freeze([
+      player({
+        name: 'Prof. Plum'
+      }),
+      player({
+        name: 'Col. Mustard'
+      })
+    ]),
     gameRounds = Object.freeze({
       limit: 3,
       target: 2,
@@ -235,9 +244,9 @@
         });
 
         test('covers valid $.players configuration', function() {
-          var player = 'Rev. Green';
+          var playerName = 'Rev. Green';
 
-          configure(player, [player, gamePlayers[1]]);
+          configure(playerName, [player({ name: playerName }), gamePlayers[1]]);
         });
 
         function configure(config, expected) {
@@ -247,7 +256,8 @@
             player: config
           });
 
-          assert.deepEqual(ns.gameObj.players, expected);
+          assert.equal(ns.gameObj.players[0].name, expected[0].name);
+          assert.equal(ns.gameObj.players[1].name, expected[1].name);
         }
       });
 
@@ -278,7 +288,7 @@
                 weapons: modifiedWeapons
               });
             },
-            'expecting "opts.weapons" to have at least 3 elements',
+            /expecting "opts.weapons" to have at least 3 elements/,
             'too few elements in "opts.weapons"'
           );
         });
@@ -298,7 +308,7 @@
                 weapons: modifiedWeapons
               });
             },
-            'expecting "opts.weapons" to have an odd number of elements',
+            /expecting "opts.weapons" to have an odd number of elements/,
             'even number of elements in "opts.weapons"'
           );
         });
@@ -375,14 +385,14 @@
             function() {
               ns.gameObj.fight('apple', weaponPaper.name);
             },
-            'check params: "apple" is not a member of "weapons"',
+            /check params: "apple" is not a member of "weapons"/,
             'incorrect "a" parameter passed to $.game.fight()'
           );
           assert.throws(
             function() {
               ns.gameObj.fight(weaponPaper.name, 'pear');
             },
-            'check params: "pear" is not a member of "weapons"',
+            /check params: "pear" is not a member of "weapons"/,
             'incorrect "b" parameter passed to $.game.fight()'
           );
           assert.equal(ns.gameObj.rounds.played, 2);
@@ -393,14 +403,34 @@
         teardown('destroy gameObj', destroyGameObject);
 
         test('resets the current game using existing configuration', function() {
+          var result;
+
           ns.gameObj = game({
             weapons: gameWeapons
           });
 
-          ns.gameObj.fight(weaponPaper.name, weaponScissors.name);
-          assert.equal(ns.gameObj.rounds.played, 1);
+          result = ns.gameObj.fight(weaponPaper.name, weaponScissors.name);
+
+          assert.equal(ns.gameObj.rounds.played, 1); /// a < b => -1
+          assert.deepEqual(ns.gameObj.players[0].stats, {
+            wins: 0,
+            losses: 1
+          });
+          assert.deepEqual(ns.gameObj.players[1].stats, {
+            wins: 1,
+            losses: 0
+          });
+
           ns.gameObj.reset();
           assert.equal(ns.gameObj.rounds.played, 0);
+          assert.deepEqual(ns.gameObj.players[0].stats, {
+            wins: 0,
+            losses: 0
+          });
+          assert.deepEqual(ns.gameObj.players[1].stats, {
+            wins: 0,
+            losses: 0
+          });
         });
       });
     });

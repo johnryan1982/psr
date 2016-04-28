@@ -1,9 +1,7 @@
 (function() {
   'use strict';
 
-  var
-    api,
-    weapon;
+  var api, weapon;
 
   weapon = function weapon(opts) {
     var name, defeats;

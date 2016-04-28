@@ -71,6 +71,80 @@
           assert.equal(ns.playerObj.name, expected);
         }
       });
+
+      suite('$.player().updateStats(n)', function() {
+        teardown('destroy playerObj', destroyPlayerObject);
+
+        test('updates the player score statistics', function() {
+          ns.playerObj = player();
+
+          ns.playerObj.updateStats(1);
+          assert.equal(ns.playerObj.stats.wins, 1);
+
+          ns.playerObj.updateStats(-1);
+          assert.equal(ns.playerObj.stats.losses, 1);
+
+          ns.playerObj.reset();
+          assert.equal(ns.playerObj.stats.wins, 0);
+          assert.equal(ns.playerObj.stats.losses, 0);
+        });
+
+        test('ignores all invalid values', function() {
+          var datatypes, datatypesLen, i, invalidNumericValues, invalidNumericValuesLen, j;
+
+          /// numbers are valid input and are tested elsewhere
+          datatypes = utils.datatypes.filter(function removeNumeric(val) {
+            return typeof val !== 'number';
+          });
+          datatypesLen = datatypes.length;
+
+          for (i = 0; i < datatypesLen; i += 1) {
+            invalid(datatypes[i]);
+          }
+
+          invalidNumericValues = [-Infinity, -2, 2.1, Infinity];
+          invalidNumericValuesLen = invalidNumericValues.length;
+          for (j = 0; j < invalidNumericValuesLen; j += 1) {
+            invalid(invalidNumericValues[j]);
+          }
+        });
+
+        function invalid(config) {
+          ns.playerObj = player();
+
+          assert.throws(
+            function() {
+              ns.playerObj.updateStats(config);
+            },
+            /expecting "n" to be /,
+            'invalid $.player().updateStats(' + config + ') invocation'
+          );
+
+          assert.deepEqual(ns.playerObj.stats, {
+            wins: 0,
+            losses: 0
+          });
+        }
+      });
+
+      suite('$.player().reset()', function() {
+        teardown('destroy playerObj', destroyPlayerObject);
+
+        test('resets the current player score statistics', function() {
+          ns.playerObj = player();
+
+          ns.playerObj.updateStats(1);
+          ns.playerObj.updateStats(0);
+          assert.equal(ns.playerObj.stats.wins, 1);
+
+          ns.playerObj.updateStats(-1);
+          assert.equal(ns.playerObj.stats.losses, 1);
+
+          ns.playerObj.reset();
+          assert.equal(ns.playerObj.stats.wins, 0);
+          assert.equal(ns.playerObj.stats.losses, 0);
+        });
+      });
     });
   });
 

@@ -44,7 +44,7 @@
     "mocha_cli_config": "--reporter spec --ui tdd --check-leaks"
   },
   "scripts": {
-    "install": "npm run githooks -s",
+    "_install": "npm run githooks -s",
     "postinstall": "npm run build -s",
 
     "githooks": "npm run githook:pre-commit -s",
